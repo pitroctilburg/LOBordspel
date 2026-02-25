@@ -13,7 +13,7 @@ Docenten maken en beheren hun eigen vragensets via een adminpaneel en delen een 
 - **Frontend:** Vite + React (SPA), TypeScript
 - **Styling:** Tailwind CSS met CSS Modules voor overrides
 - **Backend:** Express.js REST API, TypeScript
-- **ORM/DB:** Prisma + MySQL
+- **ORM/DB:** Drizzle ORM + MySQL
 - **Auth:** Zonder wachtwoord (naam + e-mail registratie, picker voor inloggen) — wordt later vervangen door een externe auth-service
 
 ## Monorepo Structuur
@@ -21,7 +21,8 @@ Docenten maken en beheren hun eigen vragensets via een adminpaneel en delen een 
 ```
 /client          — Vite + React SPA
 /server          — Express.js API
-/prisma          — Prisma schema en migraties
+/server/src/db   — Drizzle schema en DB-verbinding
+/server/drizzle  — Drizzle migraties (gegenereerd)
 /shared/types    — Gedeelde TypeScript types tussen client en server
 /legacy          — Origineel statisch prototype (LOBspel20251216_NT2.html)
 ```
@@ -43,9 +44,9 @@ pnpm --filter server dev          # Start Express dev server (tsx watch)
 pnpm --filter server build        # Compileer TypeScript
 
 # Database
-pnpm --filter server exec prisma migrate dev   # Voer migraties uit
-pnpm --filter server exec prisma generate      # Genereer Prisma client opnieuw
-pnpm --filter server exec prisma studio        # Visuele DB-browser
+pnpm exec drizzle-kit generate                 # Genereer migratie uit schema
+pnpm exec drizzle-kit push                     # Push schema naar database
+pnpm exec drizzle-kit studio                   # Visuele DB-browser
 ```
 
 ## Spelstructuur
