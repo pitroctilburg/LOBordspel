@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  naam      String
+  email     String      @unique
+  sets      VragenSet[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model VragenSet {
+  id             Int             @id @default(autoincrement())
+  label          String
+  userId         Int
+  user           User            @relation(fields: [userId], references: [id])
+  shareToken     String?         @unique
+  vragen         Vraag[]
+  geslotenVragen GeslotenVraag[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+enum Competentie {
+  KWALITEITEN
+  MOTIEVEN
+  WERK
+  STURING
+  NETWERKEN
+}
+
+model Vraag {
+  id           Int         @id @default(autoincrement())
+  vraagTekst   String      @db.Text
+  competentie  Competentie
+  tijdSeconden Int         // 30, 60 of 120
+  vragenSetId  Int
+  vragenSet    VragenSet   @relation(fields: [vragenSetId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+enum GeslotenVraagType {
+  WAAR_NIET_WAAR
+  VIER_OPTIES
+}
+
+model GeslotenVraag {
+  id              Int               @id @default(autoincrement())
+  vraagTekst      String            @db.Text
+  type            GeslotenVraagType
+  tijdSeconden    Int               // 30, 45 of 60
+  optieA          String
+  optieB          String
+  optieC          String?           // null bij WAAR_NIET_WAAR
+  optieD          String?           // null bij WAAR_NIET_WAAR
+  correctAntwoord String            // "A", "B", "C" of "D"
+  vragenSetId     Int
+  vragenSet       VragenSet         @relation(fields: [vragenSetId], references: [id], onDelete: Cascade)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}

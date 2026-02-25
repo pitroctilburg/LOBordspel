@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>LOBordspel</title>
+  <!-- Let op: 'Tecna' lijkt geen echt Google Font. Dit linkje laadt waarschijnlijk niets. -->
+  <link href="https://fonts.googleapis.com/css2?family=Tecna:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --yonder-rood: #FD6555;
+      --yonder-paars: #8F88FD;
+      --yonder-geel: #FBFB00;
+      --yonder-groen: #81FBAE;
+      --yonder-lichtblauw: #DAF2FE;
+      --vuurrood: #FF0000;
+      --wit: #FFFFFF;
+      --zwart: #000000;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background-color: var(--zwart);
+      color: var(--wit);
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-family: 'Tecna', sans-serif;
+      color: var(--wit);
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+    }
+
+    .knoppen-container { margin-top: 20px; }
+
+    button {
+      margin: 10px;
+      padding: 14px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover { transform: scale(1.05); }
+
+    .icoon-groot { font-size: 36px; }
+
+    .kwaliteiten { background-color: var(--yonder-geel); color: var(--zwart); }
+    .motieven { background-color: var(--yonder-paars); color: var(--wit); }
+    .werk { background-color: var(--yonder-lichtblauw); color: var(--zwart); }
+    .sturing { background-color: var(--yonder-rood); color: var(--wit); }
+    .netwerken { background-color: var(--yonder-groen); color: var(--zwart); }
+    .powerup { background-color: var(--vuurrood); color: var(--wit); }
+    .gesloten { background-color: var(--wit); color: var(--zwart); font-size: 24px; }
+
+    #vraag-vlak {
+      background-color: var(--wit);
+      color: var(--zwart);
+      border: 2px solid var(--yonder-paars);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 750px;
+      min-height: 100px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    #feedback {
+      margin-top: 15px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    #timer {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--yonder-geel);
+    }
+
+    .timer-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .extra-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .antwoord-opties { margin-top: 15px; }
+    .antwoord-opties button {
+      background-color: var(--yonder-paars);
+      color: white;
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 999px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .challenge-box {
+      background-color: var(--wit);
+      color: var(--zwart);
+      border: 2px solid var(--yonder-paars);
+      border-radius: 16px;
+      padding: 30px 20px;
+      margin: 0 auto 30px auto;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .challenge-box h2 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      font-family: 'Tecna', sans-serif;
+      color: var(--yonder-paars);
+    }
+
+    a { color: var(--yonder-rood); text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <h1>💡 LOBordspel 💡</h1>
+
+  <div class="challenge-box">
+    <h2>CHALLENGES</h2>
+    <div class="knoppen-container">
+      <button class="kwaliteiten icoon-groot" onclick="toonVraag('kwaliteiten')">💪</button>
+      <button class="motieven icoon-groot" onclick="toonVraag('motieven')">❤️</button>
+      <button class="werk icoon-groot" onclick="toonVraag('werk')">🔍</button>
+      <button class="sturing icoon-groot" onclick="toonVraag('sturing')">🧭</button>
+      <button class="netwerken icoon-groot" onclick="toonVraag('netwerken')">🤝</button>
+    </div>
+  </div>
+
+  <div class="timer-wrapper">
+    <span id="timer">⏱️ Timer: 2:00</span>
+    <button onclick="stopTimer()" class="powerup">🛑</button>
+  </div>
+
+  <div id="vraag-vlak">Klik op een knop om een vraag of opdracht te zien.</div>
+  <div id="feedback"></div>
+
+  <div class="extra-buttons">
+    <button class="powerup" onclick="toonPowerUp()">⚡ POWER UP</button>
+    <button class="gesloten" onclick="toonGeslotenVraag()">❓</button>
+  </div>
+
+  <audio id="eindgeluid" src="timer-end.mp3" preload="auto"></audio>
+
+  <script>
+    const vragen = {
+      kwaliteiten: [
+        { tekst: "Schrijf 2 dingen op waar jij goed in bent.", tijd: 60 },
+        { tekst: "Noem 1 ding dat jij beter wilt leren.", tijd: 30 },
+        { tekst: "Teken jezelf terwijl je iets doet waar je trots op bent.", tijd: 120 },
+        { tekst: "Vertel 1 ding waar jij goed in bent.", tijd: 30 },
+        { tekst: "Schrijf op wat anderen vaak zeggen dat jij goed doet.", tijd: 60 },
+        { tekst: "Maak een lijstje van 3 hobby’s waar jij blij van wordt.", tijd: 120 },
+        { tekst: "Schrijf 1 ding op dat jij hebt geleerd de laatste maand.", tijd: 90 },
+        { tekst: "Vertel een keer dat jij iemand geholpen hebt.", tijd: 90 },
+        { tekst: "Bedenk 1 kwaliteit die jou helpt bij school.", tijd: 60 },
+        { tekst: "Noem 2 dingen waar je trots op bent.", tijd: 60 },
+        { tekst: "Schrijf op: wat vind je makkelijker dan anderen?", tijd: 90 },
+        { tekst: "Teken een ster. Zet in elke punt 1 kwaliteit van jezelf.", tijd: 180 },
+        { tekst: "Bedenk 1 situatie waarin jij rustig bleef.", tijd: 60 },
+        { tekst: "Vertel iets waar jij goed in bent en waarom.", tijd: 90 },
+        { tekst: "Schrijf 1 fout op die je maakte. Wat heb je ervan geleerd?", tijd: 120 },
+        { tekst: "Maak een lijstje van 2 dingen die je graag nog wilt leren.", tijd: 90 },
+        { tekst: "Noem 1 compliment dat jij kreeg.", tijd: 60 },
+        { tekst: "Schrijf op: welke kwaliteit helpt jou bij samenwerken?", tijd: 90 },
+        { tekst: "Teken jezelf met een symbool dat laat zien waar je goed in bent.", tijd: 120 },
+        { tekst: "Waar ben jij trots op?", tijd: 60 }
+      ],
+      motieven: [
+        { tekst: "Schrijf 2 dingen op die jou blij maken.", tijd: 60 },
+        { tekst: "Noem 1 reden waarom jij graag naar school gaat.", tijd: 30 },
+        { tekst: "Teken iets dat jou energie geeft.", tijd: 180 },
+        { tekst: "Vertel wat jou motiveert.", tijd: 60 },
+        { tekst: "Schrijf 1 ding op dat jou helpt om door te zetten.", tijd: 60 },
+        { tekst: "Noem 2 dingen die jij belangrijk vindt in een baan.", tijd: 60 },
+        { tekst: "Teken jouw droomplek om te werken.", tijd: 180 },
+        { tekst: "Schrijf 1 ding op wat je liever niet wilt in je werk.", tijd: 60 },
+        { tekst: "Vertel kort iets wat jou nieuwsgierig maakt.", tijd: 90 },
+        { tekst: "Schrijf 2 dingen op waar jij trots op bent.", tijd: 60 },
+        { tekst: "Noem 1 ding dat jou helpt om door te leren.", tijd: 60 },
+        { tekst: "Schrijf 1 situatie op waarin jij plezier had bij school of werk.", tijd: 90 },
+        { tekst: "Vertel wat jij leuk vindt aan samenwerken.", tijd: 90 },
+        { tekst: "Schrijf 3 dingen op die jij belangrijk vindt in jouw toekomst.", tijd: 120 },
+        { tekst: "Schrijf 1 voorbeeld op van iets wat je leuk vindt om te doen.", tijd: 60 },
+        { tekst: "Noem 2 mensen die jou motiveren.", tijd: 60 },
+        { tekst: "Schrijf 1 droom op die jij hebt.", tijd: 90 },
+        { tekst: "Maak een lijst van 3 dingen die jij later wilt bereiken.", tijd: 120 }
+      ],
+      werk: [
+        { tekst: "Schrijf 2 beroepen op die jij leuk vindt.", tijd: 60 },
+        { tekst: "Teken iemand aan het werk in een beroep dat jij interessant vindt.", tijd: 180 },
+        { tekst: "Noem 1 baan die jij niet leuk vindt. Waarom vind jij die baan niet leuk?", tijd: 60 },
+        { tekst: "Vertel: welk beroep lijkt jou leuk? En waarom?", tijd: 60 },
+        { tekst: "Welke vraag wil je stellen aan iemand die jouw droombaan heeft?", tijd: 60 },
+        { tekst: "Maak een lijstje van 3 beroepen die jij kent.", tijd: 60 },
+        { tekst: "Schrijf 1 ding op dat jij belangrijk vindt in een beroep.", tijd: 60 },
+        { tekst: "Noem 2 beroepen die lijken op elkaar.", tijd: 90 },
+        { tekst: "Teken je droombaan.", tijd: 180 },
+        { tekst: "Zoek op: wat verdient iemand in het beroep dat jij leuk vindt?", tijd: 180 },
+        { tekst: "Vertel welk beroep jij later misschien wilt doen.", tijd: 60 },
+        { tekst: "Noem 1 beroep dat jouw ouders of familie doen.", tijd: 30 },
+        { tekst: "Schrijf 2 beroepen op die jij vaak op tv ziet.", tijd: 60 },
+        { tekst: "Maak een lijstje van 3 beroepen waar je veel moet samenwerken.", tijd: 120 },
+        { tekst: "Teken een beroep dat buiten is.", tijd: 180 },
+        { tekst: "Noem 1 beroep dat jij gevaarlijk vindt.", tijd: 60 },
+        { tekst: "Schrijf 2 beroepen op die jij later misschien wilt proberen.", tijd: 90 },
+        { tekst: "Vertel: welk beroep lijkt jou helemaal niet leuk, waarom?", tijd: 60 }
+      ],
+      sturing: [
+        { tekst: "Schrijf 1 ding op dat jij dit schooljaar wilt leren.", tijd: 60 },
+        { tekst: "Noem 2 dingen die jij goed hebt gedaan de laatste maand.", tijd: 60 },
+        { tekst: "Schrijf op: waar wil jij over 5 jaar zijn?", tijd: 120 },
+        { tekst: "Vertel wat jouw droom is.", tijd: 90 },
+        { tekst: "Schrijf 2 dingen op die jij nodig hebt om jouw droom te halen.", tijd: 120 },
+        { tekst: "Maak een tekening van jouw toekomst: school, werk of hobby.", tijd: 180 },
+        { tekst: "Kies 1 probleem waar je tegenaan loopt. Schrijf hoe jij dit kunt oplossen.", tijd: 180 },
+        { tekst: "Bedenk 2 vragen die je kunt stellen aan een docent om beter te worden.", tijd: 120 },
+        { tekst: "Noem 1 voorbeeld van iets wat niet lukte. Wat heb je geleerd?", tijd: 90 },
+        { tekst: "Vertel in 1 zin wat jou helpt om door te zetten.", tijd: 60 },
+        { tekst: "Maak een lijstje met 3 dingen die jij belangrijk vindt op het werk.", tijd: 120 },
+        { tekst: "Maak een korte planning voor de rest van vandaag.", tijd: 180 },
+        { tekst: "Vertel: waar ben jij trots op?", tijd: 60 },
+        { tekst: "Schrijf 1 fout op die je hebt gemaakt. Wat doe je de volgende keer anders?", tijd: 120 },
+        { tekst: "Teken jezelf over 5 jaar. Schrijf 1 woord erbij dat past.", tijd: 180 },
+        { tekst: "Noem 2 mensen die jou kunnen helpen om jouw doelen te halen.", tijd: 45 },
+        { tekst: "Bedenk een korte zin die jou motiveert.", tijd: 60 },
+        { tekst: "Maak een lijstje van 3 doelen voor dit jaar.", tijd: 120 }
+      ],
+      netwerken: [
+        { tekst: "Maak een lijstje van 5 mensen die jou kunnen helpen bij stage of werk.", tijd: 120 },
+        { tekst: "Bedenk 3 vragen die je kunt stellen aan iemand met jouw droombaan.", tijd: 120 },
+        { tekst: "Noem 5 mensen die jij kent (familie, school, sport) die jou kunnen helpen om nieuwe mensen te leren kennen.", tijd: 90 },
+        { tekst: "Teken een boom. Zet in de takken 3 mensen uit jouw netwerk.", tijd: 120 },
+        { tekst: "Schrijf 3 dingen op waar jij goed in bent.", tijd: 120 },
+        { tekst: "Teken 3 beroepen die je via je netwerk kunt leren kennen.", tijd: 180 },
+        { tekst: "Vraag je buur: Wie kent hij of zij die belangrijk is voor werk? Schrijf 1 ding op dat je hebt geleerd.", tijd: 180 },
+        { tekst: "Vertel kort over een keer dat iemand jou heeft geholpen.", tijd: 120 },
+        { tekst: "Zoek op: Wat is LinkedIn? Schrijf in 1 zin waarvoor het handig is.", tijd: 90 },
+        { tekst: "Zoek een open dag van een sector (bijv. zorg, techniek, sport). Schrijf de naam op en wanneer de open dag is.", tijd: 180 },
+        { tekst: "Beschrijf een persoon die jij kent. Vertel ook hoe deze persoon jou kan helpen bij stage.", tijd: 120 },
+        { tekst: "Bedenk een beroep. Zeg wie jij kent die dit beroep heeft.", tijd: 90 },
+        { tekst: "Schrijf op wie jou hielp bij een schoolkeuze.", tijd: 90 },
+        { tekst: "Bedenk 2 dingen waarmee jij iemand anders kunt helpen via jouw netwerk.", tijd: 60 },
+        { tekst: "Schrijf 1 zin die je kunt zeggen om jezelf voor te stellen aan iemand nieuw.", tijd: 90 },
+        { tekst: "Loop rond in de klas. Zoek iemand die iemand kent in de zorg.", tijd: 180 },
+        { tekst: "Loop rond in de klas. Zoek iemand die iemand kent in de horeca.", tijd: 180 },
+        { tekst: "Loop rond in de klas. Zoek iemand die iemand kent in de techniek.", tijd: 180 }
+      ]
+    };
+
+    const geslotenVragen = [
+  { vraag: "Als je weet wat je goed kunt, helpt dat bij het kiezen van een beroep.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Wat is een kwaliteit?", opties: ["Iets wat je niet leuk vindt", "Iets wat je goed kunt", "Iets wat je moet leren", "Iets wat moeilijk is"], juist: "Iets wat je goed kunt" },
+  { vraag: "Iedereen heeft kwaliteiten.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Een voorbeeld van een kwaliteit is:", opties: ["Vriendelijk zijn", "Lui zijn", "Te laat komen", "Niets doen"], juist: "Vriendelijk zijn" },
+  { vraag: "Kwaliteiten kun je nooit leren, je hebt ze of je hebt ze niet.", opties: ["Juist", "Onjuist"], juist: "Onjuist" },
+  { vraag: "Welke kwaliteit past bij goed luisteren?", opties: ["Geduldig zijn", "Driftig zijn", "Slordig zijn", "Luid praten"], juist: "Geduldig zijn" },
+  { vraag: "Een kwaliteit kan helpen bij school en werk.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Wat kan een kwaliteit zijn?", opties: ["Samenwerken", "Niets doen", "Stil blijven zitten", "Te laat komen"], juist: "Samenwerken" },
+  { vraag: "Als je je kwaliteiten kent, voel je je vaak sterker.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Waar kun je jouw kwaliteiten laten zien?", opties: ["Alleen thuis", "Alleen op school", "Op school en op werk", "Nergens"], juist: "Op school en op werk" },
+  { vraag: "Motieven zijn dingen die jij belangrijk vindt in werk.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Wat kan een motief zijn?", opties: ["Geld verdienen", "Vrienden maken", "Mensen helpen", "Alle antwoorden zijn goed"], juist: "Alle antwoorden zijn goed" },
+  { vraag: "Als je je motieven kent, kun je beter kiezen.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Wat is een voorbeeld van een motief?", opties: ["Ik wil veel vrije tijd", "Ik wil altijd te laat komen", "Ik wil niets leren", "Ik wil nooit werken"], juist: "Ik wil veel vrije tijd" },
+  { vraag: "Een motief kan hetzelfde zijn voor iedereen.", opties: ["Juist", "Onjuist"], juist: "Onjuist" },
+  { vraag: "Welke zin past bij motieven?", opties: ["Wat vind ik belangrijk?", "Wat kan ik goed?", "Wat doet mijn vriend?", "Wat is moeilijk?"], juist: "Wat vind ik belangrijk?" },
+  { vraag: "Motieven gaan vaak over:", opties: ["Wat jij leuk en belangrijk vindt", "Wat anderen leuk vinden", "Wat verplicht is", "Wat goedkoop is"], juist: "Wat jij leuk en belangrijk vindt" },
+  { vraag: "Een voorbeeld: 'Ik wil mensen helpen.' Dat is een:", opties: ["Kwaliteit", "Motief", "Fout", "Hobby"], juist: "Motief" },
+  { vraag: "Motieven kunnen veranderen in je leven.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Als je werk kiest dat bij je motieven past, voel je je vaak:", opties: ["Boos", "Ongemotiveerd", "Tevreden", "Moe"], juist: "Tevreden" },
+  { vraag: "Waar kun je informatie vinden over een beroep?", opties: ["Op internet", "In boeken", "Door iemand te vragen die dat werk doet", "Alle antwoorden zijn goed"], juist: "Alle antwoorden zijn goed" },
+  { vraag: "Je plan kan soms veranderen.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Netwerken betekent contact maken met andere mensen om meer te leren of werk te vinden.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Met wie kun je netwerken?", opties: ["Familie", "Vrienden", "Leraren of collega’s", "Alle antwoorden zijn goed"], juist: "Alle antwoorden zijn goed" },
+  { vraag: "Netwerken betekent dat je altijd alleen werkt.", opties: ["Juist", "Onjuist"], juist: "Onjuist" },
+  { vraag: "Een voorbeeld van netwerken is:", opties: ["Een gesprek voeren met iemand die een beroep doet", "Alleen thuis blijven", "Geen vragen stellen", "Niets zeggen"], juist: "Een gesprek voeren met iemand die een beroep doet" },
+  { vraag: "Netwerken kan helpen bij het vinden van werk.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Waar kun je netwerken?", opties: ["Alleen op school", "Alleen bij familie", "Overal waar je mensen ontmoet", "Nergens"], juist: "Overal waar je mensen ontmoet" },
+  { vraag: "Bij netwerken stel je vaak:", opties: ["Vragen", "Geen woorden", "Boze gezichten", "Stilte"], juist: "Vragen" },
+  { vraag: "Een stageplek zoeken met hulp van iemand is een vorm van:", opties: ["Netwerken", "Loopbaansturing", "Kwaliteitenreflectie", "Motievenreflectie"], juist: "Netwerken" },
+  { vraag: "Netwerken betekent dat je contact maakt met anderen.", opties: ["Juist", "Onjuist"], juist: "Juist" },
+  { vraag: "Waarom is netwerken belangrijk?", opties: ["Je leert nieuwe mensen kennen", "Je hoeft nooit te leren", "Je hoeft niet te praten", "Je blijft alleen"], juist: "Je leert nieuwe mensen kennen" }
+    ];
+
+    let timer;
+    let tijdOver = 120;
+
+    function startTimer(seconden = 120) {
+      clearInterval(timer);
+      tijdOver = seconden;
+      updateTimerDisplay();
+      timer = setInterval(() => {
+        tijdOver--;
+        updateTimerDisplay();
+        if (tijdOver <= 0) {
+          clearInterval(timer);
+          document.getElementById('eindgeluid').play();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timer);
+      document.getElementById("timer").textContent = "⏱️ Timer: —";
+    }
+
+    function updateTimerDisplay() {
+      const min = Math.floor(tijdOver / 60);
+      const sec = tijdOver % 60;
+      document.getElementById("timer").textContent = `⏱️ Timer: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    function toonVraag(competentie) {
+      const lijst = vragen[competentie];
+      const vraag = lijst[Math.floor(Math.random() * lijst.length)];
+      document.getElementById("vraag-vlak").textContent = vraag.tekst;
+      document.getElementById("feedback").textContent = "";
+      startTimer(vraag.tijd || 120);
+    }
+
+    function toonPowerUp() {
+      stopTimer();
+      document.getElementById("feedback").textContent = "";
+      const powerups = [
+        "Extra beurt! 🎲",
+	"Extra beurt! 🎲",
+	"Extra beurt! 🎲",
+	"Extra beurt! 🎲",
+	"Extra beurt! 🎲",
+	"Extra beurt! 🎲",
+	"Extra beurt! 🎲",
+	"Extra beurt! 🎲",
+        "Speel een challenge naar keuze ⭐",
+        "Speel een challenge naar keuze ⭐",
+        "Bij de volgende challenge mag je 1x nogmaals op de knop drukken voor een andere vraag⏭️",
+	"Bij de volgende challenge mag je 1x nogmaals op de knop drukken voor een andere vraag⏭️",
+	"Bij de volgende challenge mag je 1x nogmaals op de knop drukken voor een andere vraag⏭️",
+        "Wijs iemand aan die een beurt overslaat! ⏭️",
+	"Wijs iemand aan die een beurt overslaat! ⏭️",
+	"Wijs iemand aan die een beurt overslaat! ⏭️",
+        "Kruis een competentie af naar keuze!⭐"
+      ];
+      const resultaat = powerups[Math.floor(Math.random() * powerups.length)];
+      document.getElementById("vraag-vlak").textContent = "⚡ POWER UP! " + resultaat;
+    }
+
+    function toonGeslotenVraag() {
+      stopTimer();
+      const vraag = geslotenVragen[Math.floor(Math.random() * geslotenVragen.length)];
+      let html = `<div>${vraag.vraag}</div><div class='antwoord-opties'>`;
+      vraag.opties.forEach(optie => {
+        html += `<button onclick="controleerAntwoord('${optie}', '${vraag.juist}')">${optie}</button>`;
+      });
+      html += "</div>";
+      document.getElementById("vraag-vlak").innerHTML = html;
+      document.getElementById("feedback").textContent = "";
+    }
+
+    function controleerAntwoord(gekozen, juist) {
+      const feedback = document.getElementById("feedback");
+      feedback.textContent = gekozen === juist ? "✅ JUIST!" : "❌ Oeps, dat klopt niet.";
+    }
+  </script>
+</body>
+</html>

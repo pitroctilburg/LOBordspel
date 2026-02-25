@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+  /* Yonder merkkleuren */
+  --color-yonder-rood: #FD6555;
+  --color-yonder-paars: #8F88FD;
+  --color-yonder-geel: #FBFB00;
+  --color-yonder-groen: #81FBAE;
+  --color-yonder-lichtblauw: #DAF2FE;
+  --color-vuurrood: #FF0000;
+}
