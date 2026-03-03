@@ -1,16 +1,29 @@
-function App() {
+import { BrowserRouter, Routes, Route } from 'react-router'
+import { AuthProvider } from './context/AuthContext'
+import Layout from './components/Layout'
+import ProtectedRoute from './components/ProtectedRoute'
+import LoginPagina from './pages/LoginPagina'
+import DashboardPagina from './pages/DashboardPagina'
+import VragenSetDetailPagina from './pages/VragenSetDetailPagina'
+import NietGevondenPagina from './pages/NietGevondenPagina'
+import SpelPagina from './pages/SpelPagina'
+
+export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          LOBordspel
-        </h1>
-        <p className="text-gray-600">
-          Educatief bordspel voor loopbaanoriëntatie
-        </p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<LoginPagina />} />
+          <Route element={<Layout />}>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<DashboardPagina />} />
+              <Route path="/vragensets/:id" element={<VragenSetDetailPagina />} />
+            </Route>
+          </Route>
+          <Route path="/spel/:shareToken" element={<SpelPagina />} />
+          <Route path="*" element={<NietGevondenPagina />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
-
-export default App
