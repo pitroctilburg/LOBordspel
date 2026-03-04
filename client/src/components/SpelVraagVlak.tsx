@@ -19,7 +19,7 @@ interface SpelVraagVlakProps {
 
 export default function SpelVraagVlak({ state, onAntwoord, onVolgende }: SpelVraagVlakProps) {
   return (
-    <div className="flex-1 mx-4 mb-4 bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px]">
+    <div className="h-full bg-white rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center overflow-y-auto">
       {state.type === 'idle' && <IdleWeergave />}
       {state.type === 'competentie' && (
         <CompetentieWeergave vraag={state.vraag} competentie={state.competentie} />
@@ -62,7 +62,7 @@ function CompetentieWeergave({ vraag, competentie }: { vraag: Vraag; competentie
       >
         {meta.icoon} {meta.label}
       </span>
-      <p className="text-xl font-semibold text-gray-900 leading-relaxed">
+      <p className="text-2xl font-semibold text-gray-900 leading-relaxed">
         {vraag.vraagTekst}
       </p>
     </div>
@@ -90,7 +90,7 @@ function GeslotenWeergave({
 
   return (
     <div className="text-center w-full max-w-lg">
-      <p className="text-xl font-semibold text-gray-900 mb-6 leading-relaxed">
+      <p className="text-2xl font-semibold text-gray-900 mb-4 leading-relaxed">
         {vraag.vraagTekst}
       </p>
 

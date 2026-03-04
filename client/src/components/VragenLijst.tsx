@@ -56,6 +56,7 @@ export default function VragenLijst({ setId, competentie }: VragenLijstProps) {
   }
 
   function formatTijd(seconden: number): string {
+
     if (seconden >= 60) return `${seconden / 60} min`
     return `${seconden} sec`
   }
@@ -66,9 +67,7 @@ export default function VragenLijst({ setId, competentie }: VragenLijstProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-gray-500">
-          {vragen?.length ?? 0} vragen
-        </p>
+        <MinimumIndicator aantal={vragen?.length ?? 0} minimum={10} label="vragen" />
         {!showNieuw && bewerkId === null && (
           <button
             onClick={() => setShowNieuw(true)}
@@ -147,6 +146,22 @@ export default function VragenLijst({ setId, competentie }: VragenLijstProps) {
         onAnnuleer={() => setVerwijderId(null)}
         bezig={bezig}
       />
+    </div>
+  )
+}
+
+function MinimumIndicator({ aantal, minimum, label }: { aantal: number; minimum: number; label: string }) {
+  const gehaald = aantal >= minimum
+  return (
+    <div className="flex items-center gap-2">
+      <span className={`text-sm font-medium ${gehaald ? 'text-green-700' : 'text-red-600'}`}>
+        {aantal} / {minimum} {label}
+      </span>
+      {gehaald ? (
+        <span className="text-green-700 text-sm">✓</span>
+      ) : (
+        <span className="text-red-500 text-xs">({minimum - aantal} meer nodig)</span>
+      )}
     </div>
   )
 }

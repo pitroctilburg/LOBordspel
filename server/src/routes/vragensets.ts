@@ -110,11 +110,26 @@ router.delete('/:id', async (req, res) => {
   res.status(204).end()
 })
 
-// Genereer shareToken
+// Genereer korte 4-karakter share token (zonder verwarrende tekens 0/O, 1/I)
+const TOKEN_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+
+async function generateUniekeToken(): Promise<string> {
+  for (let poging = 0; poging < 10; poging++) {
+    const bytes = crypto.randomBytes(4)
+    const token = Array.from(bytes).map((b) => TOKEN_CHARS[b % TOKEN_CHARS.length]).join('')
+    const [bestaand] = await db
+      .select({ id: vragenSets.id })
+      .from(vragenSets)
+      .where(eq(vragenSets.shareToken, token))
+    if (!bestaand) return token
+  }
+  throw new AppError(500, 'Kon geen unieke code genereren')
+}
+
 router.post('/:id/share', async (req, res) => {
   const id = parseInt(req.params.id, 10)
   await getOwnedSet(id, req.userId!)
-  const shareToken = crypto.randomBytes(16).toString('hex')
+  const shareToken = await generateUniekeToken()
   await db
     .update(vragenSets)
     .set({ shareToken })

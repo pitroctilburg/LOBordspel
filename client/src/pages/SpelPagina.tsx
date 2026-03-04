@@ -85,6 +85,11 @@ export default function SpelPagina() {
     setState({ type: 'idle' })
   }
 
+  function handleStop() {
+    timer.stop()
+    setState({ type: 'idle' })
+  }
+
   // --- Laadstates ---
 
   if (loading) {
@@ -104,34 +109,49 @@ export default function SpelPagina() {
   }
 
   return (
-    <div className="min-h-screen bg-yonder-rood flex flex-col">
+    <div className="h-screen bg-yonder-rood flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="text-center py-3">
-        <h1 className="text-2xl font-bold text-white">LOBordspel</h1>
+      <header className="shrink-0 text-center py-2">
+        <h1 className="text-xl font-bold text-white">LOBordspel</h1>
       </header>
 
-      {/* Knoppenbalk */}
-      <SpelKnoppenBalk
-        onCompetentie={handleCompetentie}
-        onGeslotenVraag={handleGeslotenVraag}
-        onPowerUp={handlePowerUp}
-        disabled={isBezig}
-      />
+      {/* Knoppen-sectie: ~50% van resterende hoogte */}
+      <div className="flex-1 flex flex-col justify-center">
+        <SpelKnoppenBalk
+          onCompetentie={handleCompetentie}
+          onGeslotenVraag={handleGeslotenVraag}
+          onPowerUp={handlePowerUp}
+          disabled={isBezig}
+        />
 
-      {/* Timer */}
-      <SpelTimer
-        tijdOver={timer.tijdOver}
-        percentage={timer.percentage}
-        kleur={timer.kleur}
-        actief={timer.actief}
-      />
+        <SpelTimer
+          tijdOver={timer.tijdOver}
+          percentage={timer.percentage}
+          kleur={timer.kleur}
+          actief={timer.actief}
+        />
 
-      {/* Vraagvlak */}
-      <SpelVraagVlak
-        state={state}
-        onAntwoord={handleAntwoord}
-        onVolgende={handleVolgende}
-      />
+        {/* Stop-knop: alleen zichtbaar bij actieve vraag */}
+        {isBezig && (
+          <div className="flex justify-center mt-2">
+            <button
+              onClick={handleStop}
+              className="px-5 py-2 rounded-full font-bold text-white bg-vuurrood hover:scale-105 transition-transform cursor-pointer shadow-md"
+            >
+              ⏹ Stop beurt
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Vraag-sectie: ~50% van resterende hoogte */}
+      <div className="flex-1 px-4 pb-4">
+        <SpelVraagVlak
+          state={state}
+          onAntwoord={handleAntwoord}
+          onVolgende={handleVolgende}
+        />
+      </div>
     </div>
   )
 }

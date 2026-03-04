@@ -53,6 +53,21 @@ export default function ShareDialoog({ set, onUpdate }: ShareDialoogProps) {
 
       {spelUrl ? (
         <div className="space-y-3">
+          {/* Korte code — groot en goed leesbaar voor op het bord */}
+          <div className="flex items-center justify-between bg-yonder-geel rounded-lg px-4 py-3">
+            <div>
+              <p className="text-xs font-medium text-gray-600 mb-0.5">Spelcode</p>
+              <p className="text-4xl font-bold tracking-widest text-gray-900">
+                {set.shareToken}
+              </p>
+            </div>
+            <p className="text-xs text-gray-600 text-right leading-relaxed">
+              Leerlingen gaan naar<br />
+              <span className="font-medium">{window.location.host}/spel/</span>
+            </p>
+          </div>
+
+          {/* Volledige URL voor kopiëren */}
           <div className="flex gap-2">
             <input
               type="text"
@@ -63,7 +78,7 @@ export default function ShareDialoog({ set, onUpdate }: ShareDialoogProps) {
             />
             <button
               onClick={handleKopieer}
-              className="px-3 py-2 text-sm bg-yonder-paars text-white rounded-md hover:opacity-90 cursor-pointer"
+              className="px-3 py-2 text-sm bg-yonder-paars text-white rounded-md hover:opacity-90 cursor-pointer whitespace-nowrap"
             >
               {gekopieerd ? 'Gekopieerd!' : 'Kopieer'}
             </button>

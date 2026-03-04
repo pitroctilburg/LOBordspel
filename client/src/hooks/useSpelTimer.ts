@@ -1,5 +1,22 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+function speelTimerGeluid() {
+  try {
+    const ctx = new AudioContext()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.frequency.value = 440
+    gain.gain.setValueAtTime(0.4, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8)
+    osc.start(ctx.currentTime)
+    osc.stop(ctx.currentTime + 0.8)
+  } catch {
+    // AudioContext niet beschikbaar
+  }
+}
+
 interface UseSpelTimerOpties {
   onAfgelopen?: () => void
 }
@@ -39,7 +56,10 @@ export function useSpelTimer(opties?: UseSpelTimerOpties): UseSpelTimerResult {
         if (nieuw <= 0) {
           setActief(false)
           // Gebruik setTimeout zodat state-update eerst afrondt
-          setTimeout(() => onAfgelopenRef.current?.(), 0)
+          setTimeout(() => {
+            speelTimerGeluid()
+            onAfgelopenRef.current?.()
+          }, 0)
           return 0
         }
         return nieuw

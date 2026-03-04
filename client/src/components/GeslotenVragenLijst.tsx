@@ -65,9 +65,7 @@ export default function GeslotenVragenLijst({ setId }: GeslotenVragenLijstProps)
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-gray-500">
-          {vragen?.length ?? 0} gesloten vragen
-        </p>
+        <MinimumIndicator aantal={vragen?.length ?? 0} minimum={10} />
         {!showNieuw && bewerkId === null && (
           <button
             onClick={() => setShowNieuw(true)}
@@ -154,6 +152,22 @@ export default function GeslotenVragenLijst({ setId }: GeslotenVragenLijstProps)
         onAnnuleer={() => setVerwijderId(null)}
         bezig={bezig}
       />
+    </div>
+  )
+}
+
+function MinimumIndicator({ aantal, minimum = 10 }: { aantal: number; minimum?: number }) {
+  const gehaald = aantal >= minimum
+  return (
+    <div className="flex items-center gap-2">
+      <span className={`text-sm font-medium ${gehaald ? 'text-green-700' : 'text-red-600'}`}>
+        {aantal} / {minimum} gesloten vragen
+      </span>
+      {gehaald ? (
+        <span className="text-green-700 text-sm">✓</span>
+      ) : (
+        <span className="text-red-500 text-xs">({minimum - aantal} meer nodig)</span>
+      )}
     </div>
   )
 }
