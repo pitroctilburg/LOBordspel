@@ -12,10 +12,10 @@ function formatTijd(seconden: number): string {
 }
 
 export default function SpelTimer({ tijdOver, percentage, kleur, actief }: SpelTimerProps) {
-  if (!actief && tijdOver <= 0) return null
+  const zichtbaar = actief || tijdOver > 0
 
   return (
-    <div className="w-full px-4 py-2">
+    <div className={`w-full px-4 py-2 ${zichtbaar ? '' : 'invisible'}`}>
       <p className="text-white text-center text-lg font-bold mb-1">
         ⏱️ {formatTijd(tijdOver)}
       </p>

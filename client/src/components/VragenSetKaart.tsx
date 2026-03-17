@@ -11,7 +11,7 @@ export default function VragenSetKaart({ set, onVerwijder }: VragenSetKaartProps
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center justify-between">
       <div className="min-w-0 flex-1">
         <Link
-          to={`/vragensets/${set.id}`}
+          to={`/admin/vragensets/${set.id}`}
           className="text-lg font-medium text-gray-900 hover:text-yonder-paars truncate block"
         >
           {set.label}
@@ -24,7 +24,7 @@ export default function VragenSetKaart({ set, onVerwijder }: VragenSetKaartProps
       </div>
       <div className="flex items-center gap-2 ml-4">
         <Link
-          to={`/vragensets/${set.id}`}
+          to={`/admin/vragensets/${set.id}`}
           className="px-3 py-1.5 text-sm bg-yonder-paars text-white rounded-md hover:opacity-90"
         >
           Bewerken

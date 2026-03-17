@@ -25,11 +25,11 @@ export default function SpelKnoppenBalk({
             key={comp}
             onClick={() => onCompetentie(comp)}
             disabled={disabled}
-            className="px-4 py-3 rounded-xl font-bold transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer shadow-md flex flex-col items-center gap-1 min-w-[80px]"
+            className="px-5 py-4 rounded-xl font-bold transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer shadow-md flex flex-col items-center gap-1 min-w-[96px]"
             style={{ backgroundColor: meta.kleur, color: '#1f2937' }}
           >
-            <span className="text-3xl leading-none">{meta.icoon}</span>
-            <span className="text-xs">{meta.label}</span>
+            <span className="text-4xl leading-none">{meta.icoon}</span>
+            <span className="text-sm">{meta.label}</span>
           </button>
         )
       })}
@@ -41,21 +41,21 @@ export default function SpelKnoppenBalk({
       <button
         onClick={onGeslotenVraag}
         disabled={disabled}
-        className="px-4 py-3 rounded-xl font-bold transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer shadow-md border-2 border-yonder-paars bg-white flex flex-col items-center gap-1 min-w-[72px]"
+        className="px-5 py-4 rounded-xl font-bold transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer shadow-md border-2 border-yonder-paars bg-white flex flex-col items-center gap-1 min-w-[88px]"
         style={{ color: '#8F88FD' }}
       >
-        <span className="text-3xl leading-none">❓</span>
-        <span className="text-xs">Gesloten</span>
+        <span className="text-4xl leading-none">❓</span>
+        <span className="text-sm">Gesloten</span>
       </button>
 
       {/* Power Up */}
       <button
         onClick={onPowerUp}
         disabled={disabled}
-        className="px-4 py-3 rounded-xl font-bold transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer shadow-md bg-vuurrood text-white flex flex-col items-center gap-1 min-w-[72px]"
+        className="px-5 py-4 rounded-xl font-bold transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer shadow-md bg-vuurrood text-white flex flex-col items-center gap-1 min-w-[88px]"
       >
-        <span className="text-3xl leading-none">⚡</span>
-        <span className="text-xs">Power Up</span>
+        <span className="text-4xl leading-none">⚡</span>
+        <span className="text-sm">Power Up</span>
       </button>
     </div>
   )

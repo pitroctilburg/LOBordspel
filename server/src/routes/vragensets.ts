@@ -13,7 +13,7 @@ import { AppError } from '../middleware/errorHandler.js'
 import vragenRouter from './vragen.js'
 import geslotenVragenRouter from './geslotenVragen.js'
 
-const router = Router()
+const router: Router = Router()
 
 // Alle vragenset-routes vereisen authenticatie
 router.use(requireUser)
@@ -88,7 +88,7 @@ router.put(
   '/:id',
   validateBody(updateVragenSetSchema),
   async (req, res) => {
-    const id = parseInt(req.params.id, 10)
+    const id = parseInt(req.params.id as string, 10)
     await getOwnedSet(id, req.userId!)
     await db
       .update(vragenSets)

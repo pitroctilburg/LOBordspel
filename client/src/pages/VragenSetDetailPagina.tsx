@@ -42,7 +42,7 @@ export default function VragenSetDetailPagina() {
     setBezig(true)
     try {
       await api.delete(`/api/vragensets/${id}`)
-      navigate('/dashboard')
+      navigate('/admin/dashboard')
     } finally {
       setBezig(false)
     }

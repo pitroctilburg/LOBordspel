@@ -18,13 +18,13 @@ export default function LoginPagina() {
 
   // Als al ingelogd, redirect naar dashboard
   if (user) {
-    navigate('/dashboard', { replace: true })
+    navigate('/admin/dashboard', { replace: true })
     return null
   }
 
   async function handleLogin(u: User) {
     login(u)
-    navigate('/dashboard')
+    navigate('/admin/dashboard')
   }
 
   async function handleRegistratie(e: React.FormEvent) {
@@ -36,7 +36,7 @@ export default function LoginPagina() {
       const body: CreateUser = { naam: naam.trim(), email: email.trim() }
       const newUser = await api.post<User>('/api/users', body)
       login(newUser)
-      navigate('/dashboard')
+      navigate('/admin/dashboard')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Registratie mislukt')
     } finally {

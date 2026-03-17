@@ -6,7 +6,7 @@ import { validateBody } from '../middleware/validateBody.js'
 import { createVraagSchema, updateVraagSchema } from '../validation/schemas.js'
 import { AppError } from '../middleware/errorHandler.js'
 
-const router = Router({ mergeParams: true })
+const router: Router = Router({ mergeParams: true })
 
 // Helper: controleer of set bestaat en van de gebruiker is
 async function checkSetOwnership(setId: number, userId: number) {
@@ -25,7 +25,8 @@ async function checkSetOwnership(setId: number, userId: number) {
 
 // Maak nieuwe vraag
 router.post('/', validateBody(createVraagSchema), async (req, res) => {
-  const setId = parseInt(req.params.setId, 10)
+  const params = req.params as Record<string, string>
+  const setId = parseInt(params.setId, 10)
   await checkSetOwnership(setId, req.userId!)
 
   const result = await db
@@ -41,7 +42,8 @@ router.post('/', validateBody(createVraagSchema), async (req, res) => {
 
 // Lijst vragen, optioneel gefilterd op competentie
 router.get('/', async (req, res) => {
-  const setId = parseInt(req.params.setId, 10)
+  const params = req.params as Record<string, string>
+  const setId = parseInt(params.setId, 10)
   await checkSetOwnership(setId, req.userId!)
 
   const conditions = [eq(vragen.vragenSetId, setId)]
@@ -61,10 +63,11 @@ router.get('/', async (req, res) => {
 
 // Update vraag
 router.put('/:id', validateBody(updateVraagSchema), async (req, res) => {
-  const setId = parseInt(req.params.setId, 10)
+  const params = req.params as Record<string, string>
+  const setId = parseInt(params.setId, 10)
   await checkSetOwnership(setId, req.userId!)
 
-  const id = parseInt(req.params.id, 10)
+  const id = parseInt(params.id, 10)
   const [existing] = await db
     .select()
     .from(vragen)
@@ -80,10 +83,11 @@ router.put('/:id', validateBody(updateVraagSchema), async (req, res) => {
 
 // Verwijder vraag
 router.delete('/:id', async (req, res) => {
-  const setId = parseInt(req.params.setId, 10)
+  const params = req.params as Record<string, string>
+  const setId = parseInt(params.setId, 10)
   await checkSetOwnership(setId, req.userId!)
 
-  const id = parseInt(req.params.id, 10)
+  const id = parseInt(params.id, 10)
   const [existing] = await db
     .select()
     .from(vragen)

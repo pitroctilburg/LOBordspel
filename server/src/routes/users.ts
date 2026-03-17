@@ -6,7 +6,7 @@ import { validateBody } from '../middleware/validateBody.js'
 import { createUserSchema } from '../validation/schemas.js'
 import { AppError } from '../middleware/errorHandler.js'
 
-const router = Router()
+const router: Router = Router()
 
 // Registreer nieuwe gebruiker
 router.post('/', validateBody(createUserSchema), async (req, res) => {

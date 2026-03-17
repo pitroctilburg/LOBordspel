@@ -19,7 +19,7 @@ interface SpelVraagVlakProps {
 
 export default function SpelVraagVlak({ state, onAntwoord, onVolgende }: SpelVraagVlakProps) {
   return (
-    <div className="h-full bg-white rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center overflow-y-auto">
+    <div className="h-full p-4 flex flex-col items-center justify-center overflow-y-auto">
       {state.type === 'idle' && <IdleWeergave />}
       {state.type === 'competentie' && (
         <CompetentieWeergave vraag={state.vraag} competentie={state.competentie} />
@@ -46,7 +46,7 @@ export default function SpelVraagVlak({ state, onAntwoord, onVolgende }: SpelVra
 
 function IdleWeergave() {
   return (
-    <p className="text-gray-400 text-lg text-center">
+    <p className="text-white/60 text-lg text-center">
       Klik op een knop om te beginnen
     </p>
   )
@@ -62,7 +62,7 @@ function CompetentieWeergave({ vraag, competentie }: { vraag: Vraag; competentie
       >
         {meta.icoon} {meta.label}
       </span>
-      <p className="text-2xl font-semibold text-gray-900 leading-relaxed">
+      <p className="text-4xl font-semibold text-white leading-relaxed">
         {vraag.vraagTekst}
       </p>
     </div>
@@ -90,7 +90,7 @@ function GeslotenWeergave({
 
   return (
     <div className="text-center w-full max-w-lg">
-      <p className="text-2xl font-semibold text-gray-900 mb-4 leading-relaxed">
+      <p className="text-4xl font-semibold text-white mb-4 leading-relaxed">
         {vraag.vraagTekst}
       </p>
 
@@ -130,7 +130,7 @@ function GeslotenWeergave({
       </div>
 
       {beantwoord && (
-        <p className={`mt-4 text-lg font-bold ${gekozen === vraag.correctAntwoord ? 'text-green-600' : 'text-red-600'}`}>
+        <p className="mt-4 text-lg font-bold text-white">
           {gekozen === vraag.correctAntwoord ? 'Goed!' : 'Helaas, dat is niet juist.'}
         </p>
       )}
@@ -142,8 +142,8 @@ function PowerUpWeergave({ tekst }: { tekst: string }) {
   return (
     <div className="text-center">
       <p className="text-4xl mb-4">⚡</p>
-      <p className="text-2xl font-bold text-vuurrood">POWER UP!</p>
-      <p className="text-xl mt-4 text-gray-900">{tekst}</p>
+      <p className="text-2xl font-bold text-white">POWER UP!</p>
+      <p className="text-xl mt-4 text-white">{tekst}</p>
     </div>
   )
 }

@@ -9,7 +9,7 @@ import {
 } from '../validation/schemas.js'
 import { AppError } from '../middleware/errorHandler.js'
 
-const router = Router({ mergeParams: true })
+const router: Router = Router({ mergeParams: true })
 
 // Helper: controleer of set bestaat en van de gebruiker is
 async function checkSetOwnership(setId: number, userId: number) {
@@ -31,7 +31,8 @@ router.post(
   '/',
   validateBody(createGeslotenVraagSchema),
   async (req, res) => {
-    const setId = parseInt(req.params.setId, 10)
+    const params = req.params as Record<string, string>
+    const setId = parseInt(params.setId, 10)
     await checkSetOwnership(setId, req.userId!)
 
     const result = await db
@@ -48,7 +49,8 @@ router.post(
 
 // Lijst gesloten vragen
 router.get('/', async (req, res) => {
-  const setId = parseInt(req.params.setId, 10)
+  const params = req.params as Record<string, string>
+  const setId = parseInt(params.setId, 10)
   await checkSetOwnership(setId, req.userId!)
 
   const result = await db
@@ -64,10 +66,11 @@ router.put(
   '/:id',
   validateBody(updateGeslotenVraagSchema),
   async (req, res) => {
-    const setId = parseInt(req.params.setId, 10)
+    const params = req.params as Record<string, string>
+    const setId = parseInt(params.setId, 10)
     await checkSetOwnership(setId, req.userId!)
 
-    const id = parseInt(req.params.id, 10)
+    const id = parseInt(params.id, 10)
     const [existing] = await db
       .select()
       .from(geslotenVragen)
@@ -92,10 +95,11 @@ router.put(
 
 // Verwijder gesloten vraag
 router.delete('/:id', async (req, res) => {
-  const setId = parseInt(req.params.setId, 10)
+  const params = req.params as Record<string, string>
+  const setId = parseInt(params.setId, 10)
   await checkSetOwnership(setId, req.userId!)
 
-  const id = parseInt(req.params.id, 10)
+  const id = parseInt(params.id, 10)
   const [existing] = await db
     .select()
     .from(geslotenVragen)

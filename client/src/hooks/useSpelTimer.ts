@@ -45,6 +45,8 @@ export function useSpelTimer(opties?: UseSpelTimerOpties): UseSpelTimerResult {
 
   const stop = useCallback(() => {
     setActief(false)
+    setTijdOver(0)
+    setTotaal(0)
   }, [])
 
   useEffect(() => {

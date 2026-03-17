@@ -4,7 +4,7 @@ import { vragenSets, vragen, geslotenVragen } from '../db/schema.js'
 import { eq } from 'drizzle-orm'
 import { AppError } from '../middleware/errorHandler.js'
 
-const router = Router()
+const router: Router = Router()
 
 // Publieke route: haal volledige speldata op via shareToken
 router.get('/:shareToken', async (req, res) => {

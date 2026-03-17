@@ -115,41 +115,42 @@ export default function SpelPagina() {
         <h1 className="text-xl font-bold text-white">LOBordspel</h1>
       </header>
 
-      {/* Knoppen-sectie: ~50% van resterende hoogte */}
-      <div className="flex-1 flex flex-col justify-center">
+      {/* Knoppen-sectie */}
+      <div className="shrink-0 pt-8">
         <SpelKnoppenBalk
           onCompetentie={handleCompetentie}
           onGeslotenVraag={handleGeslotenVraag}
           onPowerUp={handlePowerUp}
           disabled={isBezig}
         />
+      </div>
 
+      {/* Vraag-sectie: resterende ruimte */}
+      <div className="flex-1 min-h-0 px-4 py-4">
+        <SpelVraagVlak
+          state={state}
+          onAntwoord={handleAntwoord}
+          onVolgende={handleVolgende}
+        />
+      </div>
+
+      {/* Stop-knop — altijd gereserveerde ruimte, onzichtbaar als niet actief */}
+      <div className={`shrink-0 flex justify-center pb-2 ${isBezig ? '' : 'invisible pointer-events-none'}`}>
+        <button
+          onClick={handleStop}
+          className="px-5 py-2 rounded-full font-bold text-white bg-vuurrood hover:scale-105 transition-transform cursor-pointer shadow-md"
+        >
+          Stop
+        </button>
+      </div>
+
+      {/* Timerbalk — onderaan, altijd gereserveerde ruimte */}
+      <div className="shrink-0">
         <SpelTimer
           tijdOver={timer.tijdOver}
           percentage={timer.percentage}
           kleur={timer.kleur}
           actief={timer.actief}
-        />
-
-        {/* Stop-knop: alleen zichtbaar bij actieve vraag */}
-        {isBezig && (
-          <div className="flex justify-center mt-2">
-            <button
-              onClick={handleStop}
-              className="px-5 py-2 rounded-full font-bold text-white bg-vuurrood hover:scale-105 transition-transform cursor-pointer shadow-md"
-            >
-              ⏹ Stop beurt
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Vraag-sectie: ~50% van resterende hoogte */}
-      <div className="flex-1 px-4 pb-4">
-        <SpelVraagVlak
-          state={state}
-          onAntwoord={handleAntwoord}
-          onVolgende={handleVolgende}
         />
       </div>
     </div>
