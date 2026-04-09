@@ -1,6 +1,6 @@
-import { Router } from 'express'
+import { Router, type Router as ExpressRouter } from 'express'
 
-const router = Router()
+const router: ExpressRouter = Router()
 
 // POST /api/admin/login — verifieer het beheerderswachtwoord
 router.post('/login', (req, res) => {
