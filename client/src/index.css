@@ -3,21 +3,21 @@
 /* Tecna font laden (Yonder huisfont) */
 @font-face {
   font-family: 'Tecna';
-  src: url('https://www.yonder.nl/fonts/Tecna/font.woff2') format('woff2');
+  src: url('./assets/Tecna.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Tecna';
-  src: url('https://www.yonder.nl/fonts/TecnaBold/font.woff2') format('woff2');
+  src: url('./assets/TecnaBold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Tecna';
-  src: url('https://www.yonder.nl/fonts/TecnaExtraBold/font.woff2') format('woff2');
+  src: url('./assets/TecnaExtraBold.woff2') format('woff2');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
