@@ -5,6 +5,7 @@ import { errorHandler } from './middleware/errorHandler.js'
 import usersRouter from './routes/users.js'
 import vragensetsRouter from './routes/vragensets.js'
 import spelRouter from './routes/spel.js'
+import adminRouter from './routes/admin.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -21,6 +22,7 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/users', usersRouter)
 app.use('/api/vragensets', vragensetsRouter)
 app.use('/api/spel', spelRouter)
+app.use('/api/admin', adminRouter)
 
 // Centraal error handling (moet na alle routes)
 app.use(errorHandler)

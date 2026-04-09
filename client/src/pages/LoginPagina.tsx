@@ -5,10 +5,17 @@ import { useAuth } from '../context/AuthContext'
 import { useApiGet } from '../hooks/useApi'
 import { api } from '../api/client'
 
+const SESSIE_SLEUTEL = 'admin_toegang'
+
 export default function LoginPagina() {
   const { user, login } = useAuth()
   const navigate = useNavigate()
   const { data: users, loading } = useApiGet<User[]>('/api/users')
+
+  const [toegang, setToegang] = useState(() => sessionStorage.getItem(SESSIE_SLEUTEL) === 'ja')
+  const [wachtwoord, setWachtwoord] = useState('')
+  const [wachtwoordFout, setWachtwoordFout] = useState<string | null>(null)
+  const [wachtwoordBezig, setWachtwoordBezig] = useState(false)
 
   const [showRegistratie, setShowRegistratie] = useState(false)
   const [naam, setNaam] = useState('')
@@ -22,6 +29,21 @@ export default function LoginPagina() {
     return null
   }
 
+  async function handleWachtwoord(e: React.FormEvent) {
+    e.preventDefault()
+    setWachtwoordFout(null)
+    setWachtwoordBezig(true)
+    try {
+      await api.post('/api/admin/login', { wachtwoord })
+      sessionStorage.setItem(SESSIE_SLEUTEL, 'ja')
+      setToegang(true)
+    } catch {
+      setWachtwoordFout('Ongeldig wachtwoord')
+    } finally {
+      setWachtwoordBezig(false)
+    }
+  }
+
   async function handleLogin(u: User) {
     login(u)
     navigate('/admin/dashboard')
@@ -31,7 +53,6 @@ export default function LoginPagina() {
     e.preventDefault()
     setError(null)
     setSubmitting(true)
-
     try {
       const body: CreateUser = { naam: naam.trim(), email: email.trim() }
       const newUser = await api.post<User>('/api/users', body)
@@ -54,7 +75,38 @@ export default function LoginPagina() {
         </div>
 
         <div className="bg-surface rounded-xl shadow-sm border border-border p-6">
-          {!showRegistratie ? (
+          {!toegang ? (
+            /* Stap 1: wachtwoord */
+            <>
+              <h2 className="text-lg font-semibold text-text-primary mb-4">Beheerderstoegang</h2>
+              <form onSubmit={handleWachtwoord} className="space-y-4">
+                <div>
+                  <label htmlFor="wachtwoord" className="block text-sm font-medium text-text-secondary mb-1">
+                    Wachtwoord
+                  </label>
+                  <input
+                    id="wachtwoord"
+                    type="password"
+                    value={wachtwoord}
+                    onChange={(e) => setWachtwoord(e.target.value)}
+                    required
+                    autoFocus
+                    className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+                    placeholder="Voer het beheerderswachtwoord in"
+                  />
+                </div>
+                {wachtwoordFout && <p className="text-sm text-red-600">{wachtwoordFout}</p>}
+                <button
+                  type="submit"
+                  disabled={wachtwoordBezig}
+                  className="w-full py-2 bg-yonder-paars text-white rounded-md hover:bg-yonder-paars-dark disabled:opacity-50 cursor-pointer transition-colors"
+                >
+                  {wachtwoordBezig ? 'Controleren...' : 'Toegang'}
+                </button>
+              </form>
+            </>
+          ) : !showRegistratie ? (
+            /* Stap 2a: gebruikerskiezer */
             <>
               <h2 className="text-lg font-semibold text-text-primary mb-4">Inloggen</h2>
 
@@ -89,6 +141,7 @@ export default function LoginPagina() {
               </button>
             </>
           ) : (
+            /* Stap 2b: registratie */
             <>
               <h2 className="text-lg font-semibold text-text-primary mb-4">Registreren</h2>
 
@@ -123,9 +176,7 @@ export default function LoginPagina() {
                   />
                 </div>
 
-                {error && (
-                  <p className="text-sm text-red-600">{error}</p>
-                )}
+                {error && <p className="text-sm text-red-600">{error}</p>}
 
                 <button
                   type="submit"
