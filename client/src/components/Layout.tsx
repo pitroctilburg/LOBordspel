@@ -11,18 +11,19 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-bg">
+      <nav className="bg-surface shadow-sm border-b border-border">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link to="/admin/dashboard" className="text-lg font-bold text-gray-900">
-            LOBordspel
+          <Link to="/admin/dashboard" className="flex items-center gap-2">
+            <img src="https://www.yonder.nl/img/logo-yonder.svg" alt="Yonder" className="h-7" />
+            <span className="text-lg font-bold text-text-primary font-heading">LOBordspel</span>
           </Link>
           {user && (
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">{user.naam}</span>
+              <span className="text-sm text-text-secondary">{user.naam}</span>
               <button
                 onClick={handleLogout}
-                className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer"
+                className="text-sm text-text-muted hover:text-text-secondary cursor-pointer"
               >
                 Uitloggen
               </button>

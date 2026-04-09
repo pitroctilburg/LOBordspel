@@ -102,9 +102,9 @@ export default function GeslotenVraagFormulier({
       ]
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-50 rounded-md border border-gray-200 p-4 space-y-4">
+    <form onSubmit={handleSubmit} className="bg-surface-alt rounded-xl border border-border p-4 space-y-4">
       <div>
-        <label htmlFor="gv-tekst" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="gv-tekst" className="block text-sm font-medium text-text-secondary mb-1">
           Vraagtekst
         </label>
         <textarea
@@ -112,7 +112,7 @@ export default function GeslotenVraagFormulier({
           value={vraagTekst}
           onChange={(e) => setVraagTekst(e.target.value)}
           rows={2}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
           placeholder="Typ je vraag hier..."
           autoFocus
         />
@@ -120,14 +120,14 @@ export default function GeslotenVraagFormulier({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="gv-type" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="gv-type" className="block text-sm font-medium text-text-secondary mb-1">
             Type
           </label>
           <select
             id="gv-type"
             value={type}
             onChange={(e) => handleTypeWissel(e.target.value as GeslotenVraagType)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
           >
             <option value={GeslotenVraagType.WAAR_NIET_WAAR}>Waar / Niet waar</option>
             <option value={GeslotenVraagType.VIER_OPTIES}>4 opties</option>
@@ -135,14 +135,14 @@ export default function GeslotenVraagFormulier({
         </div>
 
         <div>
-          <label htmlFor="gv-tijd" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="gv-tijd" className="block text-sm font-medium text-text-secondary mb-1">
             Tijd
           </label>
           <select
             id="gv-tijd"
             value={tijdSeconden}
             onChange={(e) => setTijdSeconden(Number(e.target.value) as 30 | 45 | 60)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
           >
             {TIJD_OPTIES.map((opt) => (
               <option key={opt.waarde} value={opt.waarde}>
@@ -155,7 +155,7 @@ export default function GeslotenVraagFormulier({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="gv-a" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="gv-a" className="block text-sm font-medium text-text-secondary mb-1">
             Optie A
           </label>
           <input
@@ -164,11 +164,11 @@ export default function GeslotenVraagFormulier({
             value={optieA}
             onChange={(e) => setOptieA(e.target.value)}
             disabled={isWaarNietWaar}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent disabled:bg-gray-100"
+            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent disabled:bg-surface-alt"
           />
         </div>
         <div>
-          <label htmlFor="gv-b" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="gv-b" className="block text-sm font-medium text-text-secondary mb-1">
             Optie B
           </label>
           <input
@@ -177,13 +177,13 @@ export default function GeslotenVraagFormulier({
             value={optieB}
             onChange={(e) => setOptieB(e.target.value)}
             disabled={isWaarNietWaar}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent disabled:bg-gray-100"
+            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent disabled:bg-surface-alt"
           />
         </div>
         {!isWaarNietWaar && (
           <>
             <div>
-              <label htmlFor="gv-c" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="gv-c" className="block text-sm font-medium text-text-secondary mb-1">
                 Optie C
               </label>
               <input
@@ -191,11 +191,11 @@ export default function GeslotenVraagFormulier({
                 type="text"
                 value={optieC}
                 onChange={(e) => setOptieC(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
               />
             </div>
             <div>
-              <label htmlFor="gv-d" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="gv-d" className="block text-sm font-medium text-text-secondary mb-1">
                 Optie D
               </label>
               <input
@@ -203,7 +203,7 @@ export default function GeslotenVraagFormulier({
                 type="text"
                 value={optieD}
                 onChange={(e) => setOptieD(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
               />
             </div>
           </>
@@ -211,14 +211,14 @@ export default function GeslotenVraagFormulier({
       </div>
 
       <div>
-        <label htmlFor="gv-correct" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="gv-correct" className="block text-sm font-medium text-text-secondary mb-1">
           Correct antwoord
         </label>
         <select
           id="gv-correct"
           value={correctAntwoord}
           onChange={(e) => setCorrectAntwoord(e.target.value as CorrectAntwoord)}
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+          className="px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
         >
           {antwoordOpties.map((opt) => (
             <option key={opt.waarde} value={opt.waarde}>
@@ -234,14 +234,14 @@ export default function GeslotenVraagFormulier({
         <button
           type="submit"
           disabled={bezig}
-          className="px-4 py-2 text-sm bg-yonder-paars text-white rounded-md hover:opacity-90 disabled:opacity-50 cursor-pointer"
+          className="px-4 py-2 text-sm bg-yonder-paars text-white rounded-md hover:bg-yonder-paars-dark transition-colors disabled:opacity-50 cursor-pointer"
         >
           {bezig ? 'Opslaan...' : 'Opslaan'}
         </button>
         <button
           type="button"
           onClick={onAnnuleer}
-          className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer"
+          className="px-4 py-2 text-sm text-text-secondary border border-border rounded-md hover:bg-bg cursor-pointer"
         >
           Annuleren
         </button>

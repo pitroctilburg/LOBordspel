@@ -39,11 +39,11 @@ export default function DashboardPagina() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Mijn vragensets</h1>
+        <h1 className="text-2xl font-bold text-text-primary font-heading">Mijn vragensets</h1>
         {!showNieuw && (
           <button
             onClick={() => setShowNieuw(true)}
-            className="px-4 py-2 bg-yonder-paars text-white rounded-md hover:opacity-90 cursor-pointer"
+            className="px-4 py-2 bg-yonder-paars text-white rounded-md hover:bg-yonder-paars-dark cursor-pointer transition-colors"
           >
             Nieuwe vragenset
           </button>
@@ -60,11 +60,11 @@ export default function DashboardPagina() {
         </div>
       )}
 
-      {loading && <p className="text-gray-500">Laden...</p>}
+      {loading && <p className="text-text-muted">Laden...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
       {sets && sets.length === 0 && !showNieuw && (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-text-muted">
           <p className="text-lg mb-2">Nog geen vragensets</p>
           <p className="text-sm">Maak je eerste vragenset aan om te beginnen.</p>
         </div>

@@ -53,7 +53,7 @@ export default function VragenSetDetailPagina() {
   }
 
   if (loading) {
-    return <p className="text-gray-500">Laden...</p>
+    return <p className="text-text-muted">Laden...</p>
   }
 
   if (error || !set) {
@@ -74,15 +74,15 @@ export default function VragenSetDetailPagina() {
         ) : (
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{set.label}</h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <h1 className="text-2xl font-bold text-text-primary font-heading">{set.label}</h1>
+              <p className="text-sm text-text-muted mt-1">
                 {set._count.vragen} vragen · {set._count.geslotenVragen} gesloten vragen
               </p>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setShowBewerk(true)}
-                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer"
+                className="px-3 py-1.5 text-sm text-text-secondary border border-border rounded-md hover:bg-bg cursor-pointer"
               >
                 Naam wijzigen
               </button>
@@ -103,7 +103,7 @@ export default function VragenSetDetailPagina() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-gray-200 overflow-x-auto">
+      <div className="flex gap-1 border-b border-border overflow-x-auto">
         {COMPETENTIES.map((comp) => (
           <CompetentieTab
             key={comp}
@@ -117,9 +117,9 @@ export default function VragenSetDetailPagina() {
           onClick={() => setActieveTab('GESLOTEN')}
           className="px-4 py-2 rounded-t-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer"
           style={{
-            backgroundColor: actieveTab === 'GESLOTEN' ? '#f3f4f6' : 'transparent',
-            color: actieveTab === 'GESLOTEN' ? '#1f2937' : '#6b7280',
-            borderBottom: actieveTab === 'GESLOTEN' ? '3px solid #6b7280' : '3px solid transparent',
+            backgroundColor: actieveTab === 'GESLOTEN' ? 'var(--color-surface-alt)' : 'transparent',
+            color: actieveTab === 'GESLOTEN' ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+            borderBottom: actieveTab === 'GESLOTEN' ? '3px solid var(--color-text-muted)' : '3px solid transparent',
           }}
         >
           Gesloten vragen

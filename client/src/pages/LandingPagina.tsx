@@ -14,10 +14,11 @@ export default function LandingPagina() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-bg">
       <div className="w-full max-w-md text-center">
-        <h1 className="text-5xl font-bold text-gray-900 mb-2">LOBordspel</h1>
-        <p className="text-gray-600 mb-10">Educatief bordspel voor loopbaanorientatie</p>
+        <img src="https://www.yonder.nl/img/logo-yonder.svg" alt="Yonder" className="h-10 mx-auto mb-4" />
+        <h1 className="text-5xl font-bold text-text-primary font-heading mb-2">LOBordspel</h1>
+        <p className="text-text-secondary mb-10">Educatief bordspel voor loopbaanorientatie</p>
 
         <form onSubmit={handleSpelen} className="flex flex-col gap-4">
           <input
@@ -25,20 +26,20 @@ export default function LandingPagina() {
             value={spelId}
             onChange={(e) => setSpelId(e.target.value)}
             placeholder="Voer spel-id in"
-            className="px-4 py-3 border border-gray-300 rounded-md text-center text-lg focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+            className="px-4 py-3 border border-border rounded-xl text-center text-lg focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
           />
           <button
             type="submit"
             disabled={!spelId.trim()}
-            className="py-3 bg-yonder-paars text-white text-lg font-semibold rounded-md hover:opacity-90 disabled:opacity-40 cursor-pointer"
+            className="py-3 bg-yonder-paars text-white text-lg font-semibold rounded-xl hover:bg-yonder-paars-dark disabled:opacity-40 cursor-pointer transition-colors"
           >
             Spelen
           </button>
         </form>
 
-        <p className="mt-12 text-sm text-gray-400">
+        <p className="mt-12 text-sm text-text-muted">
           Ben je docent?{' '}
-          <Link to="/admin" className="text-gray-500 hover:underline">
+          <Link to="/admin" className="text-yonder-rood hover:underline">
             Ga naar het adminpaneel
           </Link>
         </p>

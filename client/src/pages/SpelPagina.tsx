@@ -111,8 +111,9 @@ export default function SpelPagina() {
   return (
     <div className="h-screen bg-yonder-rood flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="shrink-0 text-center py-2">
-        <h1 className="text-xl font-bold text-white">LOBordspel</h1>
+      <header className="shrink-0 flex items-center justify-between px-4 py-2">
+        <h1 className="text-xl font-bold text-white font-heading">LOBordspel</h1>
+        <img src="https://www.yonder.nl/img/logo-yonder-white.svg" alt="Yonder" className="h-6" />
       </header>
 
       {/* Knoppen-sectie */}

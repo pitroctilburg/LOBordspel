@@ -46,7 +46,7 @@ export default function SpelVraagVlak({ state, onAntwoord, onVolgende }: SpelVra
 
 function IdleWeergave() {
   return (
-    <p className="text-white/60 text-lg text-center">
+    <p className="text-white/60 text-lg text-center font-heading">
       Klik op een knop om te beginnen
     </p>
   )
@@ -58,11 +58,11 @@ function CompetentieWeergave({ vraag, competentie }: { vraag: Vraag; competentie
     <div className="text-center">
       <span
         className="inline-block px-3 py-1 rounded-full text-sm font-bold mb-4"
-        style={{ backgroundColor: meta.kleur, color: '#1f2937' }}
+        style={{ backgroundColor: meta.kleur, color: 'var(--color-text-primary)' }}
       >
         {meta.icoon} {meta.label}
       </span>
-      <p className="text-4xl font-semibold text-white leading-relaxed">
+      <p className="text-4xl font-bold text-white leading-relaxed font-heading">
         {vraag.vraagTekst}
       </p>
     </div>
@@ -90,7 +90,7 @@ function GeslotenWeergave({
 
   return (
     <div className="text-center w-full max-w-lg">
-      <p className="text-4xl font-semibold text-white mb-4 leading-relaxed">
+      <p className="text-4xl font-bold text-white mb-4 leading-relaxed font-heading">
         {vraag.vraagTekst}
       </p>
 
@@ -105,13 +105,13 @@ function GeslotenWeergave({
           if (beantwoord) {
             if (isCorrect) {
               achtergrond = '#81FBAE' // yonder-groen
-              tekstKleur = '#1f2937'
+              tekstKleur = 'var(--color-text-primary)'
             } else if (isGekozen) {
               achtergrond = '#FD6555' // yonder-rood
               tekstKleur = 'white'
             } else {
-              achtergrond = '#e5e7eb' // grijs
-              tekstKleur = '#6b7280'
+              achtergrond = 'var(--color-border-light)' // lichtgrijs
+              tekstKleur = 'var(--color-text-muted)'
             }
           }
 

@@ -45,19 +45,20 @@ export default function LoginPagina() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-bg">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">LOBordspel</h1>
-          <p className="text-gray-600">Educatief bordspel voor loopbaanorientatie</p>
+          <img src="https://www.yonder.nl/img/logo-yonder.svg" alt="Yonder" className="h-8 mx-auto mb-3" />
+          <h1 className="text-4xl font-bold text-text-primary font-heading mb-2">LOBordspel</h1>
+          <p className="text-text-secondary">Educatief bordspel voor loopbaanorientatie</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-surface rounded-xl shadow-sm border border-border p-6">
           {!showRegistratie ? (
             <>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Inloggen</h2>
+              <h2 className="text-lg font-semibold text-text-primary mb-4">Inloggen</h2>
 
-              {loading && <p className="text-gray-500 text-sm">Laden...</p>}
+              {loading && <p className="text-text-muted text-sm">Laden...</p>}
 
               {users && users.length > 0 && (
                 <div className="space-y-2 mb-4">
@@ -65,17 +66,17 @@ export default function LoginPagina() {
                     <button
                       key={u.id}
                       onClick={() => handleLogin(u)}
-                      className="w-full text-left px-4 py-3 rounded-md border border-gray-200 hover:border-yonder-paars hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="w-full text-left px-4 py-3 rounded-xl border border-border hover:border-yonder-paars hover:bg-yonder-paars-pale transition-colors cursor-pointer"
                     >
-                      <span className="font-medium text-gray-900">{u.naam}</span>
-                      <span className="text-sm text-gray-500 ml-2">{u.email}</span>
+                      <span className="font-medium text-text-primary">{u.naam}</span>
+                      <span className="text-sm text-text-muted ml-2">{u.email}</span>
                     </button>
                   ))}
                 </div>
               )}
 
               {users && users.length === 0 && (
-                <p className="text-gray-500 text-sm mb-4">
+                <p className="text-text-muted text-sm mb-4">
                   Nog geen gebruikers. Registreer je hieronder.
                 </p>
               )}
@@ -89,11 +90,11 @@ export default function LoginPagina() {
             </>
           ) : (
             <>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Registreren</h2>
+              <h2 className="text-lg font-semibold text-text-primary mb-4">Registreren</h2>
 
               <form onSubmit={handleRegistratie} className="space-y-4">
                 <div>
-                  <label htmlFor="naam" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="naam" className="block text-sm font-medium text-text-secondary mb-1">
                     Naam
                   </label>
                   <input
@@ -102,13 +103,13 @@ export default function LoginPagina() {
                     value={naam}
                     onChange={(e) => setNaam(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+                    className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
                     placeholder="Je naam"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-1">
                     E-mail
                   </label>
                   <input
@@ -117,7 +118,7 @@ export default function LoginPagina() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
+                    className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-yonder-paars focus:border-transparent"
                     placeholder="je@email.nl"
                   />
                 </div>
@@ -129,7 +130,7 @@ export default function LoginPagina() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-2 bg-yonder-paars text-white rounded-md hover:opacity-90 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-2 bg-yonder-paars text-white rounded-md hover:bg-yonder-paars-dark disabled:opacity-50 cursor-pointer transition-colors"
                 >
                   {submitting ? 'Registreren...' : 'Registreren'}
                 </button>
@@ -140,7 +141,7 @@ export default function LoginPagina() {
                   setShowRegistratie(false)
                   setError(null)
                 }}
-                className="w-full py-2 mt-2 text-sm text-gray-500 hover:underline cursor-pointer"
+                className="w-full py-2 mt-2 text-sm text-text-muted hover:underline cursor-pointer"
               >
                 Terug naar inloggen
               </button>

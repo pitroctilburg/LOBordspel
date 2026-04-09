@@ -1,5 +1,28 @@
 @import "tailwindcss";
 
+/* Tecna font laden (Yonder huisfont) */
+@font-face {
+  font-family: 'Tecna';
+  src: url('https://www.yonder.nl/fonts/Tecna/font.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tecna';
+  src: url('https://www.yonder.nl/fonts/TecnaBold/font.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tecna';
+  src: url('https://www.yonder.nl/fonts/TecnaExtraBold/font.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   /* Yonder merkkleuren */
   --color-yonder-rood: #FD6555;
@@ -8,4 +31,37 @@
   --color-yonder-groen: #81FBAE;
   --color-yonder-lichtblauw: #DAF2FE;
   --color-vuurrood: #FF0000;
+
+  /* Afgeleide merkkleuren */
+  --color-yonder-paars-dark: #6B63D4;
+  --color-yonder-paars-pale: #EEEDFF;
+  --color-yonder-rood-light: #FFF0EE;
+
+  /* Neutrale kleuren */
+  --color-bg: #FAFAF8;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F5F3EF;
+  --color-text-primary: #1A1A2E;
+  --color-text-secondary: #5A5A72;
+  --color-text-muted: #8E8EA0;
+  --color-border: #E8E6E1;
+  --color-border-light: #F0EDE8;
+
+  /* Font families */
+  --font-heading: 'Tecna', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Segoe UI', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+}
+
+/* Globale basisstijlen */
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.3px;
 }

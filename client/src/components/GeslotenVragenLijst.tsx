@@ -59,7 +59,7 @@ export default function GeslotenVragenLijst({ setId }: GeslotenVragenLijstProps)
     return type === GeslotenVraagType.WAAR_NIET_WAAR ? 'Waar/Niet waar' : '4 opties'
   }
 
-  if (loading) return <p className="text-gray-500 text-sm">Laden...</p>
+  if (loading) return <p className="text-text-muted text-sm">Laden...</p>
   if (error) return <p className="text-red-600 text-sm">{error}</p>
 
   return (
@@ -69,7 +69,7 @@ export default function GeslotenVragenLijst({ setId }: GeslotenVragenLijstProps)
         {!showNieuw && bewerkId === null && (
           <button
             onClick={() => setShowNieuw(true)}
-            className="px-3 py-1.5 text-sm bg-yonder-paars text-white rounded-md hover:opacity-90 cursor-pointer"
+            className="px-3 py-1.5 text-sm bg-yonder-paars text-white rounded-md hover:bg-yonder-paars-dark transition-colors cursor-pointer"
           >
             Nieuwe gesloten vraag
           </button>
@@ -100,17 +100,17 @@ export default function GeslotenVragenLijst({ setId }: GeslotenVragenLijstProps)
             ) : (
               <div
                 key={vraag.id}
-                className="bg-white rounded-md border border-gray-200 p-3"
+                className="bg-surface rounded-md border border-border p-3"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-gray-900">{vraag.vraagTekst}</p>
-                    <div className="flex gap-3 mt-2 text-xs text-gray-500">
+                    <p className="text-sm text-text-primary">{vraag.vraagTekst}</p>
+                    <div className="flex gap-3 mt-2 text-xs text-text-muted">
                       <span>{formatType(vraag.type)}</span>
                       <span>{vraag.tijdSeconden} sec</span>
                       <span>Correct: {vraag.correctAntwoord}</span>
                     </div>
-                    <div className="flex gap-2 mt-1 text-xs text-gray-400">
+                    <div className="flex gap-2 mt-1 text-xs text-text-muted">
                       <span>A: {vraag.optieA}</span>
                       <span>B: {vraag.optieB}</span>
                       {vraag.optieC && <span>C: {vraag.optieC}</span>}
@@ -120,7 +120,7 @@ export default function GeslotenVragenLijst({ setId }: GeslotenVragenLijstProps)
                   <div className="flex gap-1 shrink-0">
                     <button
                       onClick={() => setBewerkId(vraag.id)}
-                      className="px-2 py-1 text-xs text-gray-600 hover:text-yonder-paars cursor-pointer"
+                      className="px-2 py-1 text-xs text-text-secondary hover:text-yonder-paars cursor-pointer"
                     >
                       Bewerk
                     </button>
@@ -139,7 +139,7 @@ export default function GeslotenVragenLijst({ setId }: GeslotenVragenLijstProps)
       )}
 
       {vragen && vragen.length === 0 && !showNieuw && (
-        <p className="text-sm text-gray-400 text-center py-8">
+        <p className="text-sm text-text-muted text-center py-8">
           Nog geen gesloten vragen
         </p>
       )}

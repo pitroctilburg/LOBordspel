@@ -48,20 +48,20 @@ export default function ShareDialoog({ set, onUpdate }: ShareDialoogProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
-      <h3 className="text-sm font-medium text-gray-900 mb-3">Deel link</h3>
+    <div className="bg-surface rounded-xl border border-border p-4">
+      <h3 className="text-sm font-medium text-text-primary mb-3">Deel link</h3>
 
       {spelUrl ? (
         <div className="space-y-3">
           {/* Korte code — groot en goed leesbaar voor op het bord */}
           <div className="flex items-center justify-between bg-yonder-geel rounded-lg px-4 py-3">
             <div>
-              <p className="text-xs font-medium text-gray-600 mb-0.5">Spelcode</p>
-              <p className="text-4xl font-bold tracking-widest text-gray-900">
+              <p className="text-xs font-medium text-text-secondary mb-0.5">Spelcode</p>
+              <p className="text-4xl font-bold tracking-widest text-text-primary">
                 {set.shareToken}
               </p>
             </div>
-            <p className="text-xs text-gray-600 text-right leading-relaxed">
+            <p className="text-xs text-text-secondary text-right leading-relaxed">
               Leerlingen gaan naar<br />
               <span className="font-medium">{window.location.host}/spel/</span>
             </p>
@@ -73,12 +73,12 @@ export default function ShareDialoog({ set, onUpdate }: ShareDialoogProps) {
               type="text"
               readOnly
               value={spelUrl}
-              className="flex-1 px-3 py-2 text-sm bg-gray-50 border border-gray-300 rounded-md"
+              className="flex-1 px-3 py-2 text-sm bg-surface-alt border border-border rounded-md"
               onClick={(e) => (e.target as HTMLInputElement).select()}
             />
             <button
               onClick={handleKopieer}
-              className="px-3 py-2 text-sm bg-yonder-paars text-white rounded-md hover:opacity-90 cursor-pointer whitespace-nowrap"
+              className="px-3 py-2 text-sm bg-yonder-paars text-white rounded-md hover:bg-yonder-paars-dark cursor-pointer whitespace-nowrap transition-colors"
             >
               {gekopieerd ? 'Gekopieerd!' : 'Kopieer'}
             </button>
@@ -95,7 +95,7 @@ export default function ShareDialoog({ set, onUpdate }: ShareDialoogProps) {
         <button
           onClick={handleGenereer}
           disabled={bezig}
-          className="px-4 py-2 text-sm bg-yonder-groen text-gray-900 rounded-md hover:opacity-90 disabled:opacity-50 cursor-pointer"
+          className="px-4 py-2 text-sm bg-yonder-groen text-text-primary rounded-md hover:opacity-90 disabled:opacity-50 cursor-pointer"
         >
           {bezig ? 'Genereren...' : 'Deel link genereren'}
         </button>
