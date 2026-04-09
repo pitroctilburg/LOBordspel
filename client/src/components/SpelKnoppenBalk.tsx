@@ -1,13 +1,51 @@
 import { Competentie, COMPETENTIE_META } from 'shared'
 import type { Competentie as CompetentieType } from 'shared'
+import kwaliteitenImg from '../assets/kwaliteiten.png'
+import motivenImg from '../assets/motieven.png'
+import werkImg from '../assets/werk.png'
+import sturingImg from '../assets/sturing.png'
+import netwerkenImg from '../assets/netwerken.png'
+import geslotenImg from '../assets/gesloten.png'
+import powerupImg from '../assets/powerup.png'
 
 const COMPETENTIES = Object.values(Competentie) as CompetentieType[]
+
+const COMPETENTIE_ICOON: Record<CompetentieType, string> = {
+  KWALITEITEN: kwaliteitenImg,
+  MOTIEVEN: motivenImg,
+  WERK: werkImg,
+  STURING: sturingImg,
+  NETWERKEN: netwerkenImg,
+}
 
 interface SpelKnoppenBalkProps {
   onCompetentie: (competentie: CompetentieType) => void
   onGeslotenVraag: () => void
   onPowerUp: () => void
   disabled: boolean
+}
+
+function IcoonKnop({
+  src,
+  label,
+  onClick,
+  disabled,
+}: {
+  src: string
+  label: string
+  onClick: () => void
+  disabled: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="flex flex-col items-center gap-2 transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer bg-transparent border-none p-0"
+    >
+      <img src={src} alt={label} className="h-20 w-20 object-contain drop-shadow-md" />
+      <span className="text-sm font-bold text-white">{label}</span>
+    </button>
+  )
 }
 
 export default function SpelKnoppenBalk({
@@ -17,46 +55,37 @@ export default function SpelKnoppenBalk({
   disabled,
 }: SpelKnoppenBalkProps) {
   return (
-    <div className="flex flex-col items-center gap-3 py-4 px-2">
+    <div className="flex flex-col items-center gap-4 py-4 px-2">
       {/* Rij 1: 5 competentie-knoppen */}
-      <div className="flex justify-center gap-3">
+      <div className="flex justify-center gap-6">
         {COMPETENTIES.map((comp) => {
           const meta = COMPETENTIE_META[comp]
           return (
-            <button
+            <IcoonKnop
               key={comp}
+              src={COMPETENTIE_ICOON[comp]}
+              label={meta.label}
               onClick={() => onCompetentie(comp)}
               disabled={disabled}
-              className="px-5 py-4 rounded-xl font-bold transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer shadow-md flex flex-col items-center gap-1 min-w-[96px]"
-              style={{ backgroundColor: meta.kleur, color: 'var(--color-text-primary)' }}
-            >
-              <span className="text-4xl leading-none">{meta.icoon}</span>
-              <span className="text-sm">{meta.label}</span>
-            </button>
+            />
           )
         })}
       </div>
 
       {/* Rij 2: Gesloten vragen + Power Up */}
-      <div className="flex justify-center gap-3">
-        <button
+      <div className="flex justify-center gap-6">
+        <IcoonKnop
+          src={geslotenImg}
+          label="Gesloten"
           onClick={onGeslotenVraag}
           disabled={disabled}
-          className="px-5 py-4 rounded-xl font-bold transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer shadow-md border-2 border-yonder-paars bg-white flex flex-col items-center gap-1 min-w-[88px]"
-          style={{ color: '#8F88FD' }}
-        >
-          <span className="text-4xl leading-none">❓</span>
-          <span className="text-sm">Gesloten</span>
-        </button>
-
-        <button
+        />
+        <IcoonKnop
+          src={powerupImg}
+          label="Power Up"
           onClick={onPowerUp}
           disabled={disabled}
-          className="px-5 py-4 rounded-xl font-bold transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer shadow-md bg-vuurrood text-white flex flex-col items-center gap-1 min-w-[88px]"
-        >
-          <span className="text-4xl leading-none">⚡</span>
-          <span className="text-sm">Power Up</span>
-        </button>
+        />
       </div>
     </div>
   )
