@@ -15,30 +15,47 @@ export const users = mysqlTable('users', {
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 })
 
+export const spelSjablonen = mysqlTable('spel_sjablonen', {
+  id: int('id').primaryKey().autoincrement(),
+  naam: varchar('naam', { length: 200 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+})
+
+export const themas = mysqlTable('themas', {
+  id: int('id').primaryKey().autoincrement(),
+  titel: varchar('titel', { length: 100 }).notNull(),
+  kleur: varchar('kleur', { length: 7 }).notNull(),
+  afbeeldingPad: varchar('afbeelding_pad', { length: 500 }),
+  volgorde: int('volgorde').notNull().default(0),
+  spelSjabloonId: int('spel_sjabloon_id')
+    .notNull()
+    .references(() => spelSjablonen.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+})
+
 export const vragenSets = mysqlTable('vragen_sets', {
   id: int('id').primaryKey().autoincrement(),
   label: varchar('label', { length: 200 }).notNull(),
   userId: int('user_id')
     .notNull()
     .references(() => users.id),
+  spelSjabloonId: int('spel_sjabloon_id')
+    .notNull()
+    .references(() => spelSjablonen.id),
   shareToken: varchar('share_token', { length: 64 }).unique(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 })
 
-export const competentieEnum = mysqlEnum('competentie', [
-  'KWALITEITEN',
-  'MOTIEVEN',
-  'WERK',
-  'STURING',
-  'NETWERKEN',
-])
-
 export const vragen = mysqlTable('vragen', {
   id: int('id').primaryKey().autoincrement(),
   vraagTekst: text('vraag_tekst').notNull(),
-  competentie: competentieEnum.notNull(),
-  tijdSeconden: int('tijd_seconden').notNull(), // 30, 60, 120
+  themaId: int('thema_id')
+    .notNull()
+    .references(() => themas.id),
+  tijdSeconden: int('tijd_seconden').notNull(),
   vragenSetId: int('vragen_set_id')
     .notNull()
     .references(() => vragenSets.id, { onDelete: 'cascade' }),

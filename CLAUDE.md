@@ -4,9 +4,9 @@ Dit bestand geeft richtlijnen aan Claude Code (claude.ai/code) bij het werken in
 
 ## Projectoverzicht
 
-LOBordspel is een Nederlandse educatieve bordspel-webapp voor loopbaanoriëntatie en -begeleiding (LOB), gericht op NT2-leerlingen. Spelers beantwoorden challenges in vijf competentiecategorieën om loopbaanbewustzijn te ontwikkelen.
+LOBordspel is een Nederlands educatief bordspel-platform gericht op NT2-leerlingen. Het platform ondersteunt meerdere soorten spellen via **Spelsjablonen** — elk sjabloon definieert een set thema's (met titel, kleur en afbeelding) waarin vragen worden ingedeeld.
 
-Docenten maken en beheren hun eigen vragensets via een adminpaneel en delen een spellink met leerlingen die in de browser spelen.
+Docenten maken spelsjablonen en vragensets via een adminpaneel en delen een spellink met leerlingen die in de browser spelen. Het standaard sjabloon "LOBordspel" bevat de 5 LOB-competentiecategorieën.
 
 ## Tech Stack
 
@@ -19,12 +19,13 @@ Docenten maken en beheren hun eigen vragensets via een adminpaneel en delen een 
 ## Monorepo Structuur
 
 ```
-/client          — Vite + React SPA
-/server          — Express.js API
-/server/src/db   — Drizzle schema en DB-verbinding
-/server/drizzle  — Drizzle migraties (gegenereerd)
-/shared/types    — Gedeelde TypeScript types tussen client en server
-/legacy          — Origineel statisch prototype (LOBspel20251216_NT2.html)
+/client            — Vite + React SPA
+/server            — Express.js API
+/server/src/db     — Drizzle schema en DB-verbinding
+/server/uploads    — Geüploade thema-afbeeldingen (niet in git)
+/server/drizzle    — Drizzle migraties (gegenereerd)
+/shared/types      — Gedeelde TypeScript types tussen client en server
+/legacy            — Origineel statisch prototype (LOBspel20251216_NT2.html)
 ```
 
 ## Commando's
@@ -51,21 +52,24 @@ pnpm exec drizzle-kit studio                   # Visuele DB-browser
 
 ## Spelstructuur
 
-- **5 competentiecategorieën** (elk met een kleur en icoon):
-  - Kwaliteiten (💪 geel `#FBFB00`)
-  - Motieven (❤️ paars `#8F88FD`)
-  - Werk (🔍 lichtblauw `#DAF2FE`)
-  - Sturing (🧭 rood `#FD6555`)
-  - Netwerken (🤝 groen `#81FBAE`)
-- **Gesloten vragen** (❓): Multiple-choice met aangegeven correct antwoord
-- **Power Ups** (⚡): Willekeurige bonusacties (extra beurt, overslaan, vrije keuze, etc.)
+- **Spelsjablonen**: Definiëren welke thema's een spel heeft. Elk thema heeft een titel, kleur en afbeelding. Sjablonen zijn globaal (zichtbaar voor alle docenten).
+- **Thema's**: Dynamische categorieën binnen een sjabloon. Het standaard "LOBordspel"-sjabloon bevat:
+  - Kwaliteiten (geel `#FBFB00`)
+  - Motieven (paars `#8F88FD`)
+  - Werk (lichtblauw `#DAF2FE`)
+  - Sturing (rood `#FD6555`)
+  - Netwerken (groen `#81FBAE`)
+- **Gesloten vragen**: Multiple-choice met aangegeven correct antwoord
+- **Power Ups**: Willekeurige bonusacties (extra beurt, overslaan, vrije keuze, etc.)
 - **Timer**: Afteller per vraag met instelbare duur; speelt geluid af bij aflopen
 
 ## Datamodel (kernentiteiten)
 
 - **User** — naam, e-mail (uniek). Zonder wachtwoord (wordt later vervangen door externe auth).
-- **VragenSet** — eigendom van een User, heeft een tekstlabel + datum, optioneel een share token voor publieke toegang.
-- **Vraag (competentie)** — hoort bij een VragenSet en een categorie (Kwaliteiten/Motieven/Werk/Sturing/Netwerken). Heeft vraagtekst en een tijd (keuze uit: 30 seconden / 1 minuut / 2 minuten). Minimaal 10 vragen per competentie per set.
+- **SpelSjabloon** — globale speltemplate met een naam. Bevat minimaal 2 thema's. Zichtbaar voor alle docenten.
+- **Thema** — categorie binnen een sjabloon. Heeft titel, kleur (hex), afbeelding (geüpload via multer naar `server/uploads/`), en volgorde. Cascade delete met sjabloon.
+- **VragenSet** — eigendom van een User, gekoppeld aan een SpelSjabloon (onwijzigbaar na aanmaak). Heeft een tekstlabel + datum, optioneel een share token voor publieke toegang.
+- **Vraag** — hoort bij een VragenSet en een Thema (uit het sjabloon van de set). Heeft vraagtekst en een tijd (keuze uit: 30 seconden / 1 minuut / 2 minuten). Minimaal 10 vragen per thema per set.
 - **GeslotenVraag** — hoort bij een VragenSet. Minimaal 10 gesloten vragen per set. Twee typen:
   - **Waar/Niet waar** — twee vaste opties
   - **4 custom opties** — docent voert 4 antwoordmogelijkheden in
@@ -74,9 +78,10 @@ pnpm exec drizzle-kit studio                   # Visuele DB-browser
 ## Belangrijkste Flows
 
 1. **Registratie/Inloggen:** Docent voert naam + e-mail in om te registreren. Inloggen gaat via een eenvoudige gebruikerskiezer (geen wachtwoord). Dit is een tijdelijke oplossing — wordt later vervangen door een externe auth-service.
-2. **Adminpaneel:** Ingelogde docenten beheren hun eigen vragensets — CRUD voor sets en individuele vragen per categorie. Elke vraag heeft een instelbare timerduur. Gesloten vragen hebben multiple-choice opties met een correct antwoord.
-3. **Delen:** Een vragenset kan gedeeld worden via een unieke link (share token). Iedereen met de link kan spelen.
-4. **Spelen:** Speler opent een gedeelde spellink, ziet het bord met 5 categorieknoppen + Power Up + Gesloten Vragen. Klikken op een categorie toont een willekeurige vraag uit die set met een afteltimer. Gesloten vragen tonen multiple-choice met feedback.
+2. **Spelsjablonen beheren:** Docenten kunnen spelsjablonen aanmaken, bewerken en verwijderen via `/admin/spelsjablonen`. Elk sjabloon bevat thema's met titel, kleur en afbeelding. Thema-afbeeldingen worden geüpload naar de server.
+3. **Vragensets beheren:** Bij het aanmaken van een vragenset kiest de docent eerst een spelsjabloon. Daarna kan hij vragen invoeren per thema uit dat sjabloon. Het sjabloon kan na aanmaak niet meer gewijzigd worden.
+4. **Delen:** Een vragenset kan gedeeld worden via een unieke link (share token). Iedereen met de link kan spelen.
+5. **Spelen:** Speler opent een gedeelde spellink, ziet het bord met dynamische themaknoppen (uit het sjabloon) + Power Up + Gesloten Vragen. Klikken op een thema toont een willekeurige vraag uit die set met een afteltimer. Gesloten vragen tonen multiple-choice met feedback.
 
 ## Design Systeem (Yonder merkkleuren)
 

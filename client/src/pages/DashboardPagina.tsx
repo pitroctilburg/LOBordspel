@@ -4,24 +4,40 @@ import { useApiGet } from '../hooks/useApi'
 import { api } from '../api/client'
 import VragenSetKaart from '../components/VragenSetKaart'
 import VragenSetFormulier from '../components/VragenSetFormulier'
+import SpelSjabloonKiezer from '../components/SpelSjabloonKiezer'
 import BevestigDialoog from '../components/BevestigDialoog'
+
+type NieuwStap = 'idle' | 'kiesSjabloon' | 'voerLabelIn'
 
 export default function DashboardPagina() {
   const { data: sets, loading, error, refetch } = useApiGet<VragenSet[]>('/api/vragensets')
 
-  const [showNieuw, setShowNieuw] = useState(false)
+  const [nieuwStap, setNieuwStap] = useState<NieuwStap>('idle')
+  const [gekozenSjabloonId, setGekozenSjabloonId] = useState<number | null>(null)
   const [bezig, setBezig] = useState(false)
   const [verwijderId, setVerwijderId] = useState<number | null>(null)
 
+  function handleSjabloonGekozen(sjabloonId: number) {
+    setGekozenSjabloonId(sjabloonId)
+    setNieuwStap('voerLabelIn')
+  }
+
   async function handleNieuweSet(label: string) {
+    if (gekozenSjabloonId === null) return
     setBezig(true)
     try {
-      await api.post('/api/vragensets', { label })
-      setShowNieuw(false)
+      await api.post('/api/vragensets', { label, spelSjabloonId: gekozenSjabloonId })
+      setNieuwStap('idle')
+      setGekozenSjabloonId(null)
       refetch()
     } finally {
       setBezig(false)
     }
+  }
+
+  function handleAnnuleer() {
+    setNieuwStap('idle')
+    setGekozenSjabloonId(null)
   }
 
   async function handleVerwijder() {
@@ -40,9 +56,9 @@ export default function DashboardPagina() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-text-primary font-heading">Mijn vragensets</h1>
-        {!showNieuw && (
+        {nieuwStap === 'idle' && (
           <button
-            onClick={() => setShowNieuw(true)}
+            onClick={() => setNieuwStap('kiesSjabloon')}
             className="px-4 py-2 bg-yonder-paars text-white rounded-md hover:bg-yonder-paars-dark cursor-pointer transition-colors"
           >
             Nieuwe vragenset
@@ -50,11 +66,20 @@ export default function DashboardPagina() {
         )}
       </div>
 
-      {showNieuw && (
+      {nieuwStap === 'kiesSjabloon' && (
+        <div className="mb-6">
+          <SpelSjabloonKiezer
+            onKies={handleSjabloonGekozen}
+            onAnnuleer={handleAnnuleer}
+          />
+        </div>
+      )}
+
+      {nieuwStap === 'voerLabelIn' && (
         <div className="mb-6">
           <VragenSetFormulier
             onOpslaan={handleNieuweSet}
-            onAnnuleer={() => setShowNieuw(false)}
+            onAnnuleer={handleAnnuleer}
             bezig={bezig}
           />
         </div>
@@ -63,7 +88,7 @@ export default function DashboardPagina() {
       {loading && <p className="text-text-muted">Laden...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
-      {sets && sets.length === 0 && !showNieuw && (
+      {sets && sets.length === 0 && nieuwStap === 'idle' && (
         <div className="text-center py-12 text-text-muted">
           <p className="text-lg mb-2">Nog geen vragensets</p>
           <p className="text-sm">Maak je eerste vragenset aan om te beginnen.</p>

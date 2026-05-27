@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { db } from '../db/index.js'
-import { vragen, vragenSets } from '../db/schema.js'
+import { vragen, vragenSets, themas } from '../db/schema.js'
 import { eq, and } from 'drizzle-orm'
 import { validateBody } from '../middleware/validateBody.js'
 import { createVraagSchema, updateVraagSchema } from '../validation/schemas.js'
@@ -8,7 +8,6 @@ import { AppError } from '../middleware/errorHandler.js'
 
 const router: Router = Router({ mergeParams: true })
 
-// Helper: controleer of set bestaat en van de gebruiker is
 async function checkSetOwnership(setId: number, userId: number) {
   const [set] = await db
     .select()
@@ -23,11 +22,22 @@ async function checkSetOwnership(setId: number, userId: number) {
   return set
 }
 
-// Maak nieuwe vraag
+async function validateThemaBelongsToSet(themaId: number, setId: number) {
+  const [set] = await db.select().from(vragenSets).where(eq(vragenSets.id, setId))
+  if (!set) throw new AppError(404, 'Vragenset niet gevonden')
+
+  const [thema] = await db.select().from(themas).where(eq(themas.id, themaId))
+  if (!thema) throw new AppError(400, 'Thema niet gevonden')
+  if (thema.spelSjabloonId !== set.spelSjabloonId) {
+    throw new AppError(400, 'Thema hoort niet bij het spelsjabloon van deze vragenset')
+  }
+}
+
 router.post('/', validateBody(createVraagSchema), async (req, res) => {
   const params = req.params as Record<string, string>
   const setId = parseInt(params.setId, 10)
   await checkSetOwnership(setId, req.userId!)
+  await validateThemaBelongsToSet(req.body.themaId, setId)
 
   const result = await db
     .insert(vragen)
@@ -40,17 +50,14 @@ router.post('/', validateBody(createVraagSchema), async (req, res) => {
   res.status(201).json(vraag)
 })
 
-// Lijst vragen, optioneel gefilterd op competentie
 router.get('/', async (req, res) => {
   const params = req.params as Record<string, string>
   const setId = parseInt(params.setId, 10)
   await checkSetOwnership(setId, req.userId!)
 
   const conditions = [eq(vragen.vragenSetId, setId)]
-  if (req.query.competentie) {
-    conditions.push(
-      eq(vragen.competentie, req.query.competentie as any),
-    )
+  if (req.query.themaId) {
+    conditions.push(eq(vragen.themaId, parseInt(req.query.themaId as string, 10)))
   }
 
   const result = await db
@@ -61,11 +68,11 @@ router.get('/', async (req, res) => {
   res.json(result)
 })
 
-// Update vraag
 router.put('/:id', validateBody(updateVraagSchema), async (req, res) => {
   const params = req.params as Record<string, string>
   const setId = parseInt(params.setId, 10)
   await checkSetOwnership(setId, req.userId!)
+  await validateThemaBelongsToSet(req.body.themaId, setId)
 
   const id = parseInt(params.id, 10)
   const [existing] = await db
@@ -81,7 +88,6 @@ router.put('/:id', validateBody(updateVraagSchema), async (req, res) => {
   res.json(vraag)
 })
 
-// Verwijder vraag
 router.delete('/:id', async (req, res) => {
   const params = req.params as Record<string, string>
   const setId = parseInt(params.setId, 10)

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import crypto from 'crypto'
 import { db } from '../db/index.js'
-import { vragenSets, vragen, geslotenVragen } from '../db/schema.js'
+import { vragenSets, vragen, geslotenVragen, spelSjablonen, themas } from '../db/schema.js'
 import { eq, count, and } from 'drizzle-orm'
 import { requireUser } from '../middleware/requireUser.js'
 import { validateBody } from '../middleware/validateBody.js'
@@ -39,9 +39,21 @@ async function getOwnedSet(setId: number, userId: number) {
 
 // Maak nieuwe vragenset
 router.post('/', validateBody(createVragenSetSchema), async (req, res) => {
+  const [sjabloon] = await db
+    .select()
+    .from(spelSjablonen)
+    .where(eq(spelSjablonen.id, req.body.spelSjabloonId))
+  if (!sjabloon) {
+    throw new AppError(400, 'Spelsjabloon niet gevonden')
+  }
+
   const result = await db
     .insert(vragenSets)
-    .values({ label: req.body.label, userId: req.userId! })
+    .values({
+      label: req.body.label,
+      userId: req.userId!,
+      spelSjabloonId: req.body.spelSjabloonId,
+    })
     .$returningId()
   const [set] = await db
     .select()
@@ -60,7 +72,20 @@ router.get('/', async (req, res) => {
   res.json(result)
 })
 
-// Detail vragenset met tellingen
+function themaToResponse(t: typeof themas.$inferSelect) {
+  return {
+    id: t.id,
+    titel: t.titel,
+    kleur: t.kleur,
+    afbeeldingUrl: t.afbeeldingPad ? `/uploads/thema-afbeeldingen/${t.afbeeldingPad}` : null,
+    volgorde: t.volgorde,
+    spelSjabloonId: t.spelSjabloonId,
+    createdAt: t.createdAt,
+    updatedAt: t.updatedAt,
+  }
+}
+
+// Detail vragenset met tellingen en spelsjabloon
 router.get('/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10)
   const set = await getOwnedSet(id, req.userId!)
@@ -74,8 +99,22 @@ router.get('/:id', async (req, res) => {
     .from(geslotenVragen)
     .where(eq(geslotenVragen.vragenSetId, id))
 
+  const [sjabloon] = await db
+    .select()
+    .from(spelSjablonen)
+    .where(eq(spelSjablonen.id, set.spelSjabloonId))
+  const sjabloonThemas = await db
+    .select()
+    .from(themas)
+    .where(eq(themas.spelSjabloonId, set.spelSjabloonId))
+    .orderBy(themas.volgorde)
+
   res.json({
     ...set,
+    spelSjabloon: {
+      ...sjabloon,
+      themas: sjabloonThemas.map(themaToResponse),
+    },
     _count: {
       vragen: vragenCount.count,
       geslotenVragen: geslotenVragenCount.count,

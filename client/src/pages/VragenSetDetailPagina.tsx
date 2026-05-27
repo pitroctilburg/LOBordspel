@@ -1,19 +1,16 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router'
-import { Competentie, COMPETENTIE_META } from 'shared'
 import type { VragenSetDetail } from 'shared'
 import { useApiGet } from '../hooks/useApi'
 import { api } from '../api/client'
-import CompetentieTab from '../components/CompetentieTab'
+import ThemaTab from '../components/ThemaTab'
 import VragenLijst from '../components/VragenLijst'
 import GeslotenVragenLijst from '../components/GeslotenVragenLijst'
 import ShareDialoog from '../components/ShareDialoog'
 import VragenSetFormulier from '../components/VragenSetFormulier'
 import BevestigDialoog from '../components/BevestigDialoog'
 
-type TabType = Competentie | 'GESLOTEN'
-
-const COMPETENTIES = Object.values(Competentie) as Competentie[]
+type TabType = number | 'GESLOTEN'
 
 export default function VragenSetDetailPagina() {
   const { id } = useParams<{ id: string }>()
@@ -22,10 +19,13 @@ export default function VragenSetDetailPagina() {
     id ? `/api/vragensets/${id}` : null,
   )
 
-  const [actieveTab, setActieveTab] = useState<TabType>(Competentie.KWALITEITEN)
+  const [actieveTab, setActieveTab] = useState<TabType | null>(null)
   const [showBewerk, setShowBewerk] = useState(false)
   const [showVerwijder, setShowVerwijder] = useState(false)
   const [bezig, setBezig] = useState(false)
+
+  const themas = set?.spelSjabloon?.themas ?? []
+  const effectieveTab = actieveTab ?? (themas.length > 0 ? themas[0].id : 'GESLOTEN')
 
   async function handleLabelOpslaan(label: string) {
     setBezig(true)
@@ -76,7 +76,7 @@ export default function VragenSetDetailPagina() {
             <div>
               <h1 className="text-2xl font-bold text-text-primary font-heading">{set.label}</h1>
               <p className="text-sm text-text-muted mt-1">
-                {set._count.vragen} vragen · {set._count.geslotenVragen} gesloten vragen
+                {set.spelSjabloon.naam} · {set._count.vragen} vragen · {set._count.geslotenVragen} gesloten vragen
               </p>
             </div>
             <div className="flex gap-2">
@@ -104,22 +104,21 @@ export default function VragenSetDetailPagina() {
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-border overflow-x-auto">
-        {COMPETENTIES.map((comp) => (
-          <CompetentieTab
-            key={comp}
-            competentie={comp}
-            meta={COMPETENTIE_META[comp]}
-            actief={actieveTab === comp}
-            onClick={() => setActieveTab(comp)}
+        {themas.map((thema) => (
+          <ThemaTab
+            key={thema.id}
+            thema={thema}
+            actief={effectieveTab === thema.id}
+            onClick={() => setActieveTab(thema.id)}
           />
         ))}
         <button
           onClick={() => setActieveTab('GESLOTEN')}
           className="px-4 py-2 rounded-t-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer"
           style={{
-            backgroundColor: actieveTab === 'GESLOTEN' ? 'var(--color-surface-alt)' : 'transparent',
-            color: actieveTab === 'GESLOTEN' ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
-            borderBottom: actieveTab === 'GESLOTEN' ? '3px solid var(--color-text-muted)' : '3px solid transparent',
+            backgroundColor: effectieveTab === 'GESLOTEN' ? 'var(--color-surface-alt)' : 'transparent',
+            color: effectieveTab === 'GESLOTEN' ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+            borderBottom: effectieveTab === 'GESLOTEN' ? '3px solid var(--color-text-muted)' : '3px solid transparent',
           }}
         >
           Gesloten vragen
@@ -128,13 +127,13 @@ export default function VragenSetDetailPagina() {
 
       {/* Tab inhoud */}
       <div className="mt-4">
-        {actieveTab === 'GESLOTEN' ? (
+        {effectieveTab === 'GESLOTEN' ? (
           <GeslotenVragenLijst setId={Number(id)} />
         ) : (
           <VragenLijst
-            key={actieveTab}
+            key={effectieveTab}
             setId={Number(id)}
-            competentie={actieveTab}
+            themaId={effectieveTab}
           />
         )}
       </div>

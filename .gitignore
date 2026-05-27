@@ -22,6 +22,9 @@ build/
 prisma/*.db
 prisma/*.db-journal
 
+# Uploads
+server/uploads/
+
 # Logs
 *.log
 npm-debug.log*

@@ -1,11 +1,10 @@
-import { COMPETENTIE_META } from 'shared'
-import type { Competentie, Vraag, GeslotenVraag, CorrectAntwoord } from 'shared'
+import type { Thema, Vraag, GeslotenVraag, CorrectAntwoord } from 'shared'
 
 // --- Types ---
 
 export type SpelState =
   | { type: 'idle' }
-  | { type: 'competentie'; vraag: Vraag; competentie: Competentie }
+  | { type: 'thema'; vraag: Vraag; thema: Thema }
   | { type: 'gesloten'; vraag: GeslotenVraag; gekozen: CorrectAntwoord | null }
   | { type: 'powerup'; tekst: string }
 
@@ -21,8 +20,8 @@ export default function SpelVraagVlak({ state, onAntwoord, onVolgende }: SpelVra
   return (
     <div className="h-full p-4 flex flex-col items-center justify-center overflow-y-auto">
       {state.type === 'idle' && <IdleWeergave />}
-      {state.type === 'competentie' && (
-        <CompetentieWeergave vraag={state.vraag} competentie={state.competentie} />
+      {state.type === 'thema' && (
+        <ThemaWeergave vraag={state.vraag} thema={state.thema} />
       )}
       {state.type === 'gesloten' && (
         <GeslotenWeergave vraag={state.vraag} gekozen={state.gekozen} onAntwoord={onAntwoord} />
@@ -52,15 +51,14 @@ function IdleWeergave() {
   )
 }
 
-function CompetentieWeergave({ vraag, competentie }: { vraag: Vraag; competentie: Competentie }) {
-  const meta = COMPETENTIE_META[competentie]
+function ThemaWeergave({ vraag, thema }: { vraag: Vraag; thema: Thema }) {
   return (
     <div className="text-center">
       <span
         className="inline-block px-3 py-1 rounded-full text-sm font-bold mb-4"
-        style={{ backgroundColor: meta.kleur, color: 'var(--color-text-primary)' }}
+        style={{ backgroundColor: thema.kleur, color: 'var(--color-text-primary)' }}
       >
-        {meta.icoon} {meta.label}
+        {thema.titel}
       </span>
       <p className="text-4xl font-bold text-white leading-relaxed font-heading">
         {vraag.vraagTekst}
@@ -99,18 +97,18 @@ function GeslotenWeergave({
           const isCorrect = letter === vraag.correctAntwoord
           const isGekozen = letter === gekozen
 
-          let achtergrond = '#8F88FD' // yonder-paars
+          let achtergrond = '#8F88FD'
           let tekstKleur = 'white'
 
           if (beantwoord) {
             if (isCorrect) {
-              achtergrond = '#81FBAE' // yonder-groen
+              achtergrond = '#81FBAE'
               tekstKleur = 'var(--color-text-primary)'
             } else if (isGekozen) {
-              achtergrond = '#FD6555' // yonder-rood
+              achtergrond = '#FD6555'
               tekstKleur = 'white'
             } else {
-              achtergrond = 'var(--color-border-light)' // lichtgrijs
+              achtergrond = 'var(--color-border-light)'
               tekstKleur = 'var(--color-text-muted)'
             }
           }

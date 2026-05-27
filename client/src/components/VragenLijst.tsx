@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Competentie, Vraag, CreateVraag, UpdateVraag } from 'shared'
+import type { Vraag, CreateVraag, UpdateVraag } from 'shared'
 import { useApiGet } from '../hooks/useApi'
 import { api } from '../api/client'
 import VraagFormulier from './VraagFormulier'
@@ -7,12 +7,12 @@ import BevestigDialoog from './BevestigDialoog'
 
 interface VragenLijstProps {
   setId: number
-  competentie: Competentie
+  themaId: number
 }
 
-export default function VragenLijst({ setId, competentie }: VragenLijstProps) {
+export default function VragenLijst({ setId, themaId }: VragenLijstProps) {
   const { data: vragen, loading, error, refetch } = useApiGet<Vraag[]>(
-    `/api/vragensets/${setId}/vragen?competentie=${competentie}`,
+    `/api/vragensets/${setId}/vragen?themaId=${themaId}`,
   )
 
   const [showNieuw, setShowNieuw] = useState(false)
@@ -56,7 +56,6 @@ export default function VragenLijst({ setId, competentie }: VragenLijstProps) {
   }
 
   function formatTijd(seconden: number): string {
-
     if (seconden >= 60) return `${seconden / 60} min`
     return `${seconden} sec`
   }
@@ -81,7 +80,7 @@ export default function VragenLijst({ setId, competentie }: VragenLijstProps) {
       {showNieuw && (
         <div className="mb-4">
           <VraagFormulier
-            competentie={competentie}
+            themaId={themaId}
             onOpslaan={handleNieuw}
             onAnnuleer={() => setShowNieuw(false)}
             bezig={bezig}
@@ -95,7 +94,7 @@ export default function VragenLijst({ setId, competentie }: VragenLijstProps) {
             bewerkId === vraag.id ? (
               <VraagFormulier
                 key={vraag.id}
-                competentie={competentie}
+                themaId={themaId}
                 bestaandeVraag={vraag}
                 onOpslaan={handleBewerk}
                 onAnnuleer={() => setBewerkId(null)}
@@ -134,7 +133,7 @@ export default function VragenLijst({ setId, competentie }: VragenLijstProps) {
 
       {vragen && vragen.length === 0 && !showNieuw && (
         <p className="text-sm text-text-muted text-center py-8">
-          Nog geen vragen in deze categorie
+          Nog geen vragen in dit thema
         </p>
       )}
 

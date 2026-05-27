@@ -1,7 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useParams } from 'react-router'
-import { Competentie } from 'shared'
-import type { Competentie as CompetentieType, SpelData, Vraag, CorrectAntwoord } from 'shared'
+import type { SpelData, Vraag, CorrectAntwoord } from 'shared'
 import { useApiGet } from '../hooks/useApi'
 import { useSpelTimer } from '../hooks/useSpelTimer'
 import SpelKnoppenBalk from '../components/SpelKnoppenBalk'
@@ -34,15 +33,16 @@ export default function SpelPagina() {
 
   const [state, setState] = useState<SpelState>({ type: 'idle' })
 
-  // Groepeer vragen per competentie
-  const vragenPerCompetentie = useMemo(() => {
-    if (!spelData) return {} as Record<CompetentieType, Vraag[]>
-    const result = {} as Record<CompetentieType, Vraag[]>
-    for (const comp of Object.values(Competentie) as CompetentieType[]) {
-      result[comp] = spelData.vragen.filter((v) => v.competentie === comp)
+  const themas = spelData?.spelSjabloon?.themas ?? []
+
+  const vragenPerThema = useMemo(() => {
+    if (!spelData) return {} as Record<number, Vraag[]>
+    const result: Record<number, Vraag[]> = {}
+    for (const thema of themas) {
+      result[thema.id] = spelData.vragen.filter((v) => v.themaId === thema.id)
     }
     return result
-  }, [spelData])
+  }, [spelData, themas])
 
   const handleTimerAfgelopen = useCallback(() => {
     setState({ type: 'idle' })
@@ -52,11 +52,13 @@ export default function SpelPagina() {
 
   const isBezig = state.type !== 'idle'
 
-  function handleCompetentie(competentie: CompetentieType) {
-    const vragen = vragenPerCompetentie[competentie]
-    const vraag = kiesWillekeurig(vragen)
+  function handleThema(themaId: number) {
+    const thema = themas.find((t) => t.id === themaId)
+    if (!thema) return
+    const vragenVoorThema = vragenPerThema[themaId] ?? []
+    const vraag = kiesWillekeurig(vragenVoorThema)
     if (!vraag) return
-    setState({ type: 'competentie', vraag, competentie })
+    setState({ type: 'thema', vraag, thema })
     timer.start(vraag.tijdSeconden)
   }
 
@@ -112,14 +114,15 @@ export default function SpelPagina() {
     <div className="h-screen bg-yonder-rood flex flex-col overflow-hidden">
       {/* Header */}
       <header className="shrink-0 flex items-center justify-between px-4 py-2">
-        <h1 className="text-xl font-bold text-white font-heading">LOBordspel</h1>
+        <h1 className="text-xl font-bold text-white font-heading">{spelData.spelSjabloon.naam}</h1>
         <img src="https://www.yonder.nl/img/logo-yonder-white.svg" alt="Yonder" className="h-6" />
       </header>
 
       {/* Knoppen-sectie */}
       <div className="shrink-0 pt-8">
         <SpelKnoppenBalk
-          onCompetentie={handleCompetentie}
+          themas={themas}
+          onThema={handleThema}
           onGeslotenVraag={handleGeslotenVraag}
           onPowerUp={handlePowerUp}
           disabled={isBezig}

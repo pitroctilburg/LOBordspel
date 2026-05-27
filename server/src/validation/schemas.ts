@@ -7,10 +7,35 @@ export const createUserSchema = z.object({
   email: z.string().email('Ongeldig e-mailadres'),
 })
 
+// --- Spelsjablonen ---
+
+export const createSpelSjabloonSchema = z.object({
+  naam: z.string().min(1, 'Naam is verplicht').max(200),
+})
+
+export const updateSpelSjabloonSchema = z.object({
+  naam: z.string().min(1, 'Naam is verplicht').max(200),
+})
+
+// --- Themas ---
+
+export const createThemaSchema = z.object({
+  titel: z.string().min(1, 'Titel is verplicht').max(100),
+  kleur: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Ongeldige kleurcode (gebruik #RRGGBB)'),
+  volgorde: z.number().int().min(0).optional(),
+})
+
+export const updateThemaSchema = z.object({
+  titel: z.string().min(1, 'Titel is verplicht').max(100),
+  kleur: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Ongeldige kleurcode (gebruik #RRGGBB)'),
+  volgorde: z.number().int().min(0).optional(),
+})
+
 // --- VragenSets ---
 
 export const createVragenSetSchema = z.object({
   label: z.string().min(1, 'Label is verplicht').max(200),
+  spelSjabloonId: z.number().int().positive('Kies een spelsjabloon'),
 })
 
 export const updateVragenSetSchema = z.object({
@@ -19,25 +44,17 @@ export const updateVragenSetSchema = z.object({
 
 // --- Vragen ---
 
-const competentieEnum = z.enum([
-  'KWALITEITEN',
-  'MOTIEVEN',
-  'WERK',
-  'STURING',
-  'NETWERKEN',
-])
-
 const vraagTijdEnum = z.union([z.literal(30), z.literal(60), z.literal(120)])
 
 export const createVraagSchema = z.object({
   vraagTekst: z.string().min(1, 'Vraagtekst is verplicht'),
-  competentie: competentieEnum,
+  themaId: z.number().int().positive('Kies een thema'),
   tijdSeconden: vraagTijdEnum,
 })
 
 export const updateVraagSchema = z.object({
   vraagTekst: z.string().min(1, 'Vraagtekst is verplicht'),
-  competentie: competentieEnum,
+  themaId: z.number().int().positive('Kies een thema'),
   tijdSeconden: vraagTijdEnum,
 })
 

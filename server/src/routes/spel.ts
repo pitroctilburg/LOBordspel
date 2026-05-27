@@ -1,12 +1,11 @@
 import { Router } from 'express'
 import { db } from '../db/index.js'
-import { vragenSets, vragen, geslotenVragen } from '../db/schema.js'
+import { vragenSets, vragen, geslotenVragen, spelSjablonen, themas } from '../db/schema.js'
 import { eq } from 'drizzle-orm'
 import { AppError } from '../middleware/errorHandler.js'
 
 const router: Router = Router()
 
-// Publieke route: haal volledige speldata op via shareToken
 router.get('/:shareToken', async (req, res) => {
   const [set] = await db
     .select()
@@ -16,6 +15,17 @@ router.get('/:shareToken', async (req, res) => {
   if (!set) {
     throw new AppError(404, 'Spel niet gevonden of link is ongeldig')
   }
+
+  const [sjabloon] = await db
+    .select()
+    .from(spelSjablonen)
+    .where(eq(spelSjablonen.id, set.spelSjabloonId))
+
+  const sjabloonThemas = await db
+    .select()
+    .from(themas)
+    .where(eq(themas.spelSjabloonId, set.spelSjabloonId))
+    .orderBy(themas.volgorde)
 
   const setVragen = await db
     .select()
@@ -29,6 +39,19 @@ router.get('/:shareToken', async (req, res) => {
 
   res.json({
     ...set,
+    spelSjabloon: {
+      ...sjabloon,
+      themas: sjabloonThemas.map((t) => ({
+        id: t.id,
+        titel: t.titel,
+        kleur: t.kleur,
+        afbeeldingUrl: t.afbeeldingPad ? `/uploads/thema-afbeeldingen/${t.afbeeldingPad}` : null,
+        volgorde: t.volgorde,
+        spelSjabloonId: t.spelSjabloonId,
+        createdAt: t.createdAt,
+        updatedAt: t.updatedAt,
+      })),
+    },
     vragen: setVragen,
     geslotenVragen: setGeslotenVragen,
   })

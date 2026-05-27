@@ -6,6 +6,8 @@ import LandingPagina from './pages/LandingPagina'
 import LoginPagina from './pages/LoginPagina'
 import DashboardPagina from './pages/DashboardPagina'
 import VragenSetDetailPagina from './pages/VragenSetDetailPagina'
+import SpelSjablonenPagina from './pages/SpelSjablonenPagina'
+import SpelSjabloonDetailPagina from './pages/SpelSjabloonDetailPagina'
 import NietGevondenPagina from './pages/NietGevondenPagina'
 import SpelPagina from './pages/SpelPagina'
 
@@ -21,6 +23,8 @@ export default function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="dashboard" element={<DashboardPagina />} />
                 <Route path="vragensets/:id" element={<VragenSetDetailPagina />} />
+                <Route path="spelsjablonen" element={<SpelSjablonenPagina />} />
+                <Route path="spelsjablonen/:id" element={<SpelSjabloonDetailPagina />} />
               </Route>
             </Route>
           </Route>

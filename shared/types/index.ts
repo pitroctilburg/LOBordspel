@@ -1,14 +1,3 @@
-// Competentie als const object + type (geen enum vanwege erasableSyntaxOnly in client)
-export const Competentie = {
-  KWALITEITEN: 'KWALITEITEN',
-  MOTIEVEN: 'MOTIEVEN',
-  WERK: 'WERK',
-  STURING: 'STURING',
-  NETWERKEN: 'NETWERKEN',
-} as const
-
-export type Competentie = (typeof Competentie)[keyof typeof Competentie]
-
 export const GeslotenVraagType = {
   WAAR_NIET_WAAR: 'WAAR_NIET_WAAR',
   VIER_OPTIES: 'VIER_OPTIES',
@@ -18,6 +7,30 @@ export type GeslotenVraagType =
   (typeof GeslotenVraagType)[keyof typeof GeslotenVraagType]
 
 export type CorrectAntwoord = 'A' | 'B' | 'C' | 'D'
+
+// --- Spelsjabloon & Thema ---
+
+export interface SpelSjabloon {
+  id: number
+  naam: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Thema {
+  id: number
+  titel: string
+  kleur: string
+  afbeeldingUrl: string | null
+  volgorde: number
+  spelSjabloonId: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface SpelSjabloonDetail extends SpelSjabloon {
+  themas: Thema[]
+}
 
 // --- Entiteiten ---
 
@@ -33,6 +46,7 @@ export interface VragenSet {
   id: number
   label: string
   userId: number
+  spelSjabloonId: number
   shareToken: string | null
   createdAt: string
   updatedAt: string
@@ -41,7 +55,7 @@ export interface VragenSet {
 export interface Vraag {
   id: number
   vraagTekst: string
-  competentie: Competentie
+  themaId: number
   tijdSeconden: number
   vragenSetId: number
   createdAt: string
@@ -72,6 +86,7 @@ export interface CreateUser {
 
 export interface CreateVragenSet {
   label: string
+  spelSjabloonId: number
 }
 
 export interface UpdateVragenSet {
@@ -80,13 +95,13 @@ export interface UpdateVragenSet {
 
 export interface CreateVraag {
   vraagTekst: string
-  competentie: Competentie
+  themaId: number
   tijdSeconden: 30 | 60 | 120
 }
 
 export interface UpdateVraag {
   vraagTekst: string
-  competentie: Competentie
+  themaId: number
   tijdSeconden: 30 | 60 | 120
 }
 
@@ -115,6 +130,7 @@ export interface UpdateGeslotenVraag {
 // --- API Response Types ---
 
 export interface VragenSetDetail extends VragenSet {
+  spelSjabloon: SpelSjabloonDetail
   _count: {
     vragen: number
     geslotenVragen: number
@@ -122,6 +138,7 @@ export interface VragenSetDetail extends VragenSet {
 }
 
 export interface SpelData extends VragenSet {
+  spelSjabloon: SpelSjabloonDetail
   vragen: Vraag[]
   geslotenVragen: GeslotenVraag[]
 }
@@ -131,34 +148,24 @@ export interface ApiError {
   details?: { veld: string; melding: string }[]
 }
 
-// --- Competentie Metadata ---
+// --- Spelsjabloon API Types ---
 
-export interface CompetentieMeta {
-  label: string
-  kleur: string
-  icoon: string
+export interface CreateSpelSjabloon {
+  naam: string
 }
 
-export const COMPETENTIE_META: Record<Competentie, CompetentieMeta> = {
-  [Competentie.KWALITEITEN]: {
-    label: 'Kwaliteiten',
-    kleur: '#FBFB00',
-    icoon: '💪',
-  },
-  [Competentie.MOTIEVEN]: {
-    label: 'Motieven',
-    kleur: '#8F88FD',
-    icoon: '❤️',
-  },
-  [Competentie.WERK]: { label: 'Werk', kleur: '#DAF2FE', icoon: '🔍' },
-  [Competentie.STURING]: {
-    label: 'Sturing',
-    kleur: '#FD6555',
-    icoon: '🧭',
-  },
-  [Competentie.NETWERKEN]: {
-    label: 'Netwerken',
-    kleur: '#81FBAE',
-    icoon: '🤝',
-  },
+export interface UpdateSpelSjabloon {
+  naam: string
+}
+
+export interface CreateThema {
+  titel: string
+  kleur: string
+  volgorde?: number
+}
+
+export interface UpdateThema {
+  titel: string
+  kleur: string
+  volgorde?: number
 }

@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import { Competentie } from 'shared'
 import type { Vraag, CreateVraag, UpdateVraag } from 'shared'
 
 interface VraagFormulierProps {
-  competentie: Competentie
+  themaId: number
   bestaandeVraag?: Vraag
   onOpslaan: (data: CreateVraag | UpdateVraag) => Promise<void>
   onAnnuleer: () => void
@@ -17,7 +16,7 @@ const TIJD_OPTIES: { waarde: 30 | 60 | 120; label: string }[] = [
 ]
 
 export default function VraagFormulier({
-  competentie,
+  themaId,
   bestaandeVraag,
   onOpslaan,
   onAnnuleer,
@@ -37,7 +36,7 @@ export default function VraagFormulier({
     }
     setError(null)
     try {
-      await onOpslaan({ vraagTekst: vraagTekst.trim(), competentie, tijdSeconden })
+      await onOpslaan({ vraagTekst: vraagTekst.trim(), themaId, tijdSeconden })
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Opslaan mislukt')
     }

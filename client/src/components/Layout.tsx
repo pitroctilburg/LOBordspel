@@ -20,6 +20,19 @@ export default function Layout() {
           </Link>
           {user && (
             <div className="flex items-center gap-4">
+              <Link
+                to="/admin/dashboard"
+                className="text-sm text-text-secondary hover:text-text-primary"
+              >
+                Vragensets
+              </Link>
+              <Link
+                to="/admin/spelsjablonen"
+                className="text-sm text-text-secondary hover:text-text-primary"
+              >
+                Spelsjablonen
+              </Link>
+              <span className="text-sm text-text-muted">|</span>
               <span className="text-sm text-text-secondary">{user.naam}</span>
               <button
                 onClick={handleLogout}
