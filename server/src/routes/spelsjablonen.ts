@@ -19,7 +19,9 @@ const router: Router = Router()
 
 router.use(requireUser)
 
-const UPLOADS_DIR = path.join(process.cwd(), 'uploads', 'thema-afbeeldingen')
+// __dirname = server/dist/routes of server/src/routes → twee niveaus omhoog = server/
+const SERVER_ROOT = path.resolve(__dirname, '..', '..')
+const UPLOADS_DIR = path.join(SERVER_ROOT, 'uploads', 'thema-afbeeldingen')
 
 const storage = multer.diskStorage({
   destination: async (_req, _file, cb) => {

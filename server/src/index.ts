@@ -14,7 +14,10 @@ const PORT = process.env.PORT || 3001
 
 app.use(cors())
 app.use(express.json())
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')))
+// __dirname = server/dist bij productie, server/src bij dev (tsx)
+// uploads/ staat naast src/ en dist/, dus één niveau omhoog
+const SERVER_ROOT = path.resolve(__dirname, '..')
+app.use('/uploads', express.static(path.join(SERVER_ROOT, 'uploads')))
 
 // Health check
 app.get('/api/health', (_req, res) => {
