@@ -88,7 +88,7 @@ function GeslotenWeergave({
 
   return (
     <div className="text-center w-full max-w-lg">
-      <p className="text-4xl font-bold text-white mb-4 leading-relaxed font-heading">
+      <p className="text-2xl font-bold text-white mb-4 leading-relaxed font-heading">
         {vraag.vraagTekst}
       </p>
 

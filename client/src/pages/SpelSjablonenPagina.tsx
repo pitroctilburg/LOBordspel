@@ -110,15 +110,22 @@ export default function SpelSjablonenPagina() {
             >
               <div>
                 <h2 className="font-medium text-text-primary">{sjabloon.naam}</h2>
-                <div className="flex gap-1 mt-1.5">
+                <div className="flex gap-3 mt-2">
                   {sjabloon.themas.map((thema) => (
-                    <span
+                    <div
                       key={thema.id}
-                      className="inline-block px-2 py-0.5 rounded-full text-xs font-medium"
-                      style={{ backgroundColor: thema.kleur, color: 'var(--color-text-primary)' }}
+                      className="flex flex-col items-center gap-1 rounded-lg px-2 py-1.5"
+                      style={{ backgroundColor: thema.kleur }}
                     >
-                      {thema.titel}
-                    </span>
+                      {thema.afbeeldingUrl && (
+                        <img
+                          src={thema.afbeeldingUrl}
+                          alt={thema.titel}
+                          className="w-10 h-10 rounded object-cover"
+                        />
+                      )}
+                      <span className="text-xs font-medium text-text-primary">{thema.titel}</span>
+                    </div>
                   ))}
                   {sjabloon.themas.length === 0 && (
                     <span className="text-xs text-text-muted">Geen thema's</span>
