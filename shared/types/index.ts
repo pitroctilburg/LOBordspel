@@ -127,6 +127,12 @@ export interface UpdateGeslotenVraag {
   correctAntwoord: CorrectAntwoord
 }
 
+export interface ImporteerVragen {
+  bronSetId: number
+  vraagIds: number[]
+  geslotenVraagIds: number[]
+}
+
 // --- API Response Types ---
 
 export interface VragenSetDetail extends VragenSet {
@@ -141,6 +147,11 @@ export interface SpelData extends VragenSet {
   spelSjabloon: SpelSjabloonDetail
   vragen: Vraag[]
   geslotenVragen: GeslotenVraag[]
+}
+
+export interface ImporteerResultaat {
+  aantalVragen: number
+  aantalGeslotenVragen: number
 }
 
 export interface ApiError {

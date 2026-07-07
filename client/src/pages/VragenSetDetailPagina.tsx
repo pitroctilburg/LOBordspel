@@ -9,6 +9,7 @@ import GeslotenVragenLijst from '../components/GeslotenVragenLijst'
 import ShareDialoog from '../components/ShareDialoog'
 import VragenSetFormulier from '../components/VragenSetFormulier'
 import BevestigDialoog from '../components/BevestigDialoog'
+import ImporteerDialoog from '../components/ImporteerDialoog'
 
 type TabType = number | 'GESLOTEN'
 
@@ -22,6 +23,8 @@ export default function VragenSetDetailPagina() {
   const [actieveTab, setActieveTab] = useState<TabType | null>(null)
   const [showBewerk, setShowBewerk] = useState(false)
   const [showVerwijder, setShowVerwijder] = useState(false)
+  const [showImporteer, setShowImporteer] = useState(false)
+  const [importVersie, setImportVersie] = useState(0)
   const [bezig, setBezig] = useState(false)
 
   const themas = set?.spelSjabloon?.themas ?? []
@@ -49,6 +52,12 @@ export default function VragenSetDetailPagina() {
   }
 
   function handleShareUpdate() {
+    refetch()
+  }
+
+  function handleImportKlaar() {
+    setShowImporteer(false)
+    setImportVersie((v) => v + 1)
     refetch()
   }
 
@@ -80,6 +89,12 @@ export default function VragenSetDetailPagina() {
               </p>
             </div>
             <div className="flex gap-2">
+              <button
+                onClick={() => setShowImporteer(true)}
+                className="px-3 py-1.5 text-sm text-text-secondary border border-border rounded-md hover:bg-bg cursor-pointer"
+              >
+                Vragen importeren
+              </button>
               <button
                 onClick={() => setShowBewerk(true)}
                 className="px-3 py-1.5 text-sm text-text-secondary border border-border rounded-md hover:bg-bg cursor-pointer"
@@ -128,15 +143,22 @@ export default function VragenSetDetailPagina() {
       {/* Tab inhoud */}
       <div className="mt-4">
         {effectieveTab === 'GESLOTEN' ? (
-          <GeslotenVragenLijst setId={Number(id)} />
+          <GeslotenVragenLijst key={`gesloten-${importVersie}`} setId={Number(id)} />
         ) : (
           <VragenLijst
-            key={effectieveTab}
+            key={`${effectieveTab}-${importVersie}`}
             setId={Number(id)}
             themaId={effectieveTab}
           />
         )}
       </div>
+
+      <ImporteerDialoog
+        open={showImporteer}
+        doelSet={set}
+        onKlaar={handleImportKlaar}
+        onAnnuleer={() => setShowImporteer(false)}
+      />
 
       <BevestigDialoog
         open={showVerwijder}

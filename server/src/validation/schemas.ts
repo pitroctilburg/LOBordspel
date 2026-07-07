@@ -42,6 +42,12 @@ export const updateVragenSetSchema = z.object({
   label: z.string().min(1, 'Label is verplicht').max(200),
 })
 
+export const importeerVragenSchema = z.object({
+  bronSetId: z.number().int().positive('Kies een bronvragenset'),
+  vraagIds: z.array(z.number().int().positive()).default([]),
+  geslotenVraagIds: z.array(z.number().int().positive()).default([]),
+})
+
 // --- Vragen ---
 
 const vraagTijdEnum = z.union([z.literal(30), z.literal(60), z.literal(120)])

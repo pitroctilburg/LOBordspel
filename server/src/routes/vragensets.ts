@@ -2,12 +2,13 @@ import { Router } from 'express'
 import crypto from 'crypto'
 import { db } from '../db/index.js'
 import { vragenSets, vragen, geslotenVragen, spelSjablonen, themas } from '../db/schema.js'
-import { eq, count, and } from 'drizzle-orm'
+import { eq, count, and, inArray } from 'drizzle-orm'
 import { requireUser } from '../middleware/requireUser.js'
 import { validateBody } from '../middleware/validateBody.js'
 import {
   createVragenSetSchema,
   updateVragenSetSchema,
+  importeerVragenSchema,
 } from '../validation/schemas.js'
 import { AppError } from '../middleware/errorHandler.js'
 import vragenRouter from './vragen.js'
@@ -194,5 +195,95 @@ router.delete('/:id/share', async (req, res) => {
     .where(eq(vragenSets.id, id))
   res.json(set)
 })
+
+// Importeer (kopieer) geselecteerde vragen uit een andere vragenset van dezelfde gebruiker
+router.post(
+  '/:id/importeer',
+  validateBody(importeerVragenSchema),
+  async (req, res) => {
+    const doelId = parseInt(req.params.id as string, 10)
+    const { bronSetId, vraagIds, geslotenVraagIds } = req.body as {
+      bronSetId: number
+      vraagIds: number[]
+      geslotenVraagIds: number[]
+    }
+
+    const doel = await getOwnedSet(doelId, req.userId!)
+    if (bronSetId === doelId) {
+      throw new AppError(400, 'Kan niet importeren uit dezelfde vragenset')
+    }
+    const bron = await getOwnedSet(bronSetId, req.userId!)
+
+    if (bron.spelSjabloonId !== doel.spelSjabloonId) {
+      throw new AppError(
+        400,
+        'De bronvragenset heeft een ander spelsjabloon dan deze vragenset',
+      )
+    }
+
+    if (vraagIds.length === 0 && geslotenVraagIds.length === 0) {
+      throw new AppError(400, 'Selecteer minimaal één vraag om te importeren')
+    }
+
+    // Haal alleen bronvragen op die daadwerkelijk bij de bronset horen
+    const bronVragen =
+      vraagIds.length > 0
+        ? await db
+            .select()
+            .from(vragen)
+            .where(
+              and(
+                eq(vragen.vragenSetId, bronSetId),
+                inArray(vragen.id, vraagIds),
+              ),
+            )
+        : []
+
+    const bronGeslotenVragen =
+      geslotenVraagIds.length > 0
+        ? await db
+            .select()
+            .from(geslotenVragen)
+            .where(
+              and(
+                eq(geslotenVragen.vragenSetId, bronSetId),
+                inArray(geslotenVragen.id, geslotenVraagIds),
+              ),
+            )
+        : []
+
+    if (bronVragen.length > 0) {
+      await db.insert(vragen).values(
+        bronVragen.map((v) => ({
+          vraagTekst: v.vraagTekst,
+          themaId: v.themaId,
+          tijdSeconden: v.tijdSeconden,
+          vragenSetId: doelId,
+        })),
+      )
+    }
+
+    if (bronGeslotenVragen.length > 0) {
+      await db.insert(geslotenVragen).values(
+        bronGeslotenVragen.map((g) => ({
+          vraagTekst: g.vraagTekst,
+          type: g.type,
+          tijdSeconden: g.tijdSeconden,
+          optieA: g.optieA,
+          optieB: g.optieB,
+          optieC: g.optieC,
+          optieD: g.optieD,
+          correctAntwoord: g.correctAntwoord,
+          vragenSetId: doelId,
+        })),
+      )
+    }
+
+    res.status(201).json({
+      aantalVragen: bronVragen.length,
+      aantalGeslotenVragen: bronGeslotenVragen.length,
+    })
+  },
+)
 
 export default router
