@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import crypto from 'crypto'
 import { db } from '../db/index.js'
-import { vragenSets, vragen, geslotenVragen, spelSjablonen, themas } from '../db/schema.js'
+import { vragenSets, vragen, geslotenVragen, spelSjablonen, themas, users } from '../db/schema.js'
 import { eq, count, and, inArray } from 'drizzle-orm'
 import { requireUser } from '../middleware/requireUser.js'
 import { validateBody } from '../middleware/validateBody.js'
@@ -9,6 +9,7 @@ import {
   createVragenSetSchema,
   updateVragenSetSchema,
   importeerVragenSchema,
+  deelVragenSetSchema,
 } from '../validation/schemas.js'
 import { AppError } from '../middleware/errorHandler.js'
 import vragenRouter from './vragen.js'
@@ -283,6 +284,85 @@ router.post(
       aantalVragen: bronVragen.length,
       aantalGeslotenVragen: bronGeslotenVragen.length,
     })
+  },
+)
+
+// Deel vragenset met andere gebruikers: elke ontvanger krijgt een eigen,
+// onafhankelijke kopie van de set met alle vragen en gesloten vragen
+router.post(
+  '/:id/deel-met',
+  validateBody(deelVragenSetSchema),
+  async (req, res) => {
+    const id = parseInt(req.params.id as string, 10)
+    const bron = await getOwnedSet(id, req.userId!)
+
+    // Dubbele id's en de eigen gebruiker eruit filteren
+    const gevraagdeIds = [...new Set(req.body.userIds as number[])].filter(
+      (uid) => uid !== req.userId,
+    )
+    if (gevraagdeIds.length === 0) {
+      throw new AppError(400, 'Kies minimaal één andere gebruiker')
+    }
+
+    const ontvangers = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(inArray(users.id, gevraagdeIds))
+    if (ontvangers.length !== gevraagdeIds.length) {
+      throw new AppError(400, 'Een of meer gebruikers bestaan niet')
+    }
+
+    const bronVragen = await db
+      .select()
+      .from(vragen)
+      .where(eq(vragen.vragenSetId, id))
+    const bronGeslotenVragen = await db
+      .select()
+      .from(geslotenVragen)
+      .where(eq(geslotenVragen.vragenSetId, id))
+
+    await db.transaction(async (tx) => {
+      for (const ontvanger of ontvangers) {
+        // Kopie krijgt geen share token: de ontvanger deelt zelf als hij dat wil
+        const [nieuw] = await tx
+          .insert(vragenSets)
+          .values({
+            label: bron.label,
+            userId: ontvanger.id,
+            spelSjabloonId: bron.spelSjabloonId,
+          })
+          .$returningId()
+
+        if (bronVragen.length > 0) {
+          await tx.insert(vragen).values(
+            bronVragen.map((v) => ({
+              vraagTekst: v.vraagTekst,
+              themaId: v.themaId,
+              tijdSeconden: v.tijdSeconden,
+              vragenSetId: nieuw.id,
+            })),
+          )
+        }
+
+        if (bronGeslotenVragen.length > 0) {
+          await tx.insert(geslotenVragen).values(
+            bronGeslotenVragen.map((g) => ({
+              vraagTekst: g.vraagTekst,
+              type: g.type,
+              tijdSeconden: g.tijdSeconden,
+              optieA: g.optieA,
+              optieB: g.optieB,
+              optieC: g.optieC,
+              optieD: g.optieD,
+              correctAntwoord: g.correctAntwoord,
+              vragenSetId: nieuw.id,
+            })),
+          )
+        }
+      }
+    })
+
+    res.status(201).json({ aantalOntvangers: ontvangers.length })
   },
 )
 

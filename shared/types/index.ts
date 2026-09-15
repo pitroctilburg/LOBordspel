@@ -133,6 +133,10 @@ export interface ImporteerVragen {
   geslotenVraagIds: number[]
 }
 
+export interface DeelVragenSet {
+  userIds: number[]
+}
+
 // --- API Response Types ---
 
 export interface VragenSetDetail extends VragenSet {
@@ -152,6 +156,10 @@ export interface SpelData extends VragenSet {
 export interface ImporteerResultaat {
   aantalVragen: number
   aantalGeslotenVragen: number
+}
+
+export interface DeelResultaat {
+  aantalOntvangers: number
 }
 
 export interface ApiError {

@@ -48,6 +48,12 @@ export const importeerVragenSchema = z.object({
   geslotenVraagIds: z.array(z.number().int().positive()).default([]),
 })
 
+export const deelVragenSetSchema = z.object({
+  userIds: z
+    .array(z.number().int().positive())
+    .min(1, 'Kies minimaal één gebruiker'),
+})
+
 // --- Vragen ---
 
 const vraagTijdEnum = z.union([z.literal(30), z.literal(60), z.literal(120)])

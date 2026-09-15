@@ -6,6 +6,7 @@ import VragenSetKaart from '../components/VragenSetKaart'
 import VragenSetFormulier from '../components/VragenSetFormulier'
 import SpelSjabloonKiezer from '../components/SpelSjabloonKiezer'
 import BevestigDialoog from '../components/BevestigDialoog'
+import DeelMetDialoog from '../components/DeelMetDialoog'
 
 type NieuwStap = 'idle' | 'kiesSjabloon' | 'voerLabelIn'
 
@@ -16,6 +17,7 @@ export default function DashboardPagina() {
   const [gekozenSjabloonId, setGekozenSjabloonId] = useState<number | null>(null)
   const [bezig, setBezig] = useState(false)
   const [verwijderId, setVerwijderId] = useState<number | null>(null)
+  const [deelSet, setDeelSet] = useState<VragenSet | null>(null)
 
   function handleSjabloonGekozen(sjabloonId: number) {
     setGekozenSjabloonId(sjabloonId)
@@ -102,6 +104,7 @@ export default function DashboardPagina() {
               key={set.id}
               set={set}
               onVerwijder={setVerwijderId}
+              onDeel={setDeelSet}
             />
           ))}
         </div>
@@ -115,6 +118,8 @@ export default function DashboardPagina() {
         onAnnuleer={() => setVerwijderId(null)}
         bezig={bezig}
       />
+
+      <DeelMetDialoog set={deelSet} onSluit={() => setDeelSet(null)} />
     </div>
   )
 }

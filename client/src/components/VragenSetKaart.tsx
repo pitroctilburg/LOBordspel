@@ -4,9 +4,10 @@ import type { VragenSet } from 'shared'
 interface VragenSetKaartProps {
   set: VragenSet
   onVerwijder: (id: number) => void
+  onDeel: (set: VragenSet) => void
 }
 
-export default function VragenSetKaart({ set, onVerwijder }: VragenSetKaartProps) {
+export default function VragenSetKaart({ set, onVerwijder, onDeel }: VragenSetKaartProps) {
   return (
     <div className="bg-surface rounded-xl shadow-sm border border-border p-4 flex items-center justify-between">
       <div className="min-w-0 flex-1">
@@ -29,6 +30,12 @@ export default function VragenSetKaart({ set, onVerwijder }: VragenSetKaartProps
         >
           Bewerken
         </Link>
+        <button
+          onClick={() => onDeel(set)}
+          className="px-3 py-1.5 text-sm text-text-secondary border border-border rounded-md hover:bg-bg cursor-pointer whitespace-nowrap"
+        >
+          Deel met...
+        </button>
         <button
           onClick={() => onVerwijder(set.id)}
           className="px-3 py-1.5 text-sm text-red-600 border border-red-200 rounded-md hover:bg-red-50 cursor-pointer"
