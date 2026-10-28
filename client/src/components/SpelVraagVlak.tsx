@@ -18,7 +18,10 @@ interface SpelVraagVlakProps {
 
 export default function SpelVraagVlak({ state, onAntwoord, onVolgende }: SpelVraagVlakProps) {
   return (
-    <div className="h-full p-4 flex flex-col items-center justify-center overflow-y-auto">
+    // Scrollbaar vlak; de binnenste wrapper centreert met my-auto zodat de
+    // bovenkant nooit buiten beeld valt (bij justify-center is die niet scrollbaar).
+    <div className="h-full p-2 sm:p-4 flex flex-col items-center overflow-y-auto">
+      <div className="my-auto w-full flex flex-col items-center">
       {state.type === 'idle' && <IdleWeergave />}
       {state.type === 'thema' && (
         <ThemaWeergave vraag={state.vraag} thema={state.thema} />
@@ -32,11 +35,12 @@ export default function SpelVraagVlak({ state, onAntwoord, onVolgende }: SpelVra
       {((state.type === 'gesloten' && state.gekozen !== null) || state.type === 'powerup') && (
         <button
           onClick={onVolgende}
-          className="mt-6 px-6 py-2 bg-yonder-paars text-white rounded-full font-bold hover:scale-105 transition-transform cursor-pointer"
+          className="mt-3 sm:mt-6 px-6 py-2 shrink-0 bg-yonder-paars text-white rounded-full font-bold hover:scale-105 transition-transform cursor-pointer"
         >
           Volgende
         </button>
       )}
+      </div>
     </div>
   )
 }
@@ -60,7 +64,7 @@ function ThemaWeergave({ vraag, thema }: { vraag: Vraag; thema: Thema }) {
       >
         {thema.titel}
       </span>
-      <p className="text-4xl font-bold text-white leading-relaxed font-heading">
+      <p className="text-2xl sm:text-4xl font-bold text-white leading-snug sm:leading-relaxed font-heading">
         {vraag.vraagTekst}
       </p>
     </div>
@@ -87,12 +91,12 @@ function GeslotenWeergave({
   const beantwoord = gekozen !== null
 
   return (
-    <div className="text-center w-full max-w-lg">
-      <p className="text-2xl font-bold text-white mb-4 leading-relaxed font-heading">
+    <div className="text-center w-full max-w-lg md:max-w-3xl">
+      <p className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4 leading-snug sm:leading-relaxed font-heading">
         {vraag.vraagTekst}
       </p>
 
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
         {zichtbareOpties.map(({ letter, tekst }) => {
           const isCorrect = letter === vraag.correctAntwoord
           const isGekozen = letter === gekozen
@@ -118,7 +122,7 @@ function GeslotenWeergave({
               key={letter}
               onClick={() => !beantwoord && onAntwoord(letter)}
               disabled={beantwoord}
-              className="px-4 py-3 rounded-full font-medium transition-transform hover:scale-[1.02] disabled:hover:scale-100 cursor-pointer text-left"
+              className="px-4 py-2 sm:py-3 rounded-full font-medium transition-transform hover:scale-[1.02] disabled:hover:scale-100 cursor-pointer text-left"
               style={{ backgroundColor: achtergrond, color: tekstKleur }}
             >
               {tekst}

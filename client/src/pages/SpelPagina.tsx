@@ -111,7 +111,7 @@ export default function SpelPagina() {
   }
 
   return (
-    <div className="h-screen bg-yonder-rood flex flex-col overflow-hidden">
+    <div className="h-dvh bg-yonder-rood flex flex-col overflow-hidden">
       {/* Header */}
       <header className="shrink-0 flex items-center justify-between px-4 py-2">
         <h1 className="text-xl font-bold text-white font-heading">{spelData.spelSjabloon.naam}</h1>
@@ -119,7 +119,7 @@ export default function SpelPagina() {
       </header>
 
       {/* Knoppen-sectie */}
-      <div className="shrink-0 pt-8">
+      <div className="shrink-0 pt-2 sm:pt-8">
         <SpelKnoppenBalk
           themas={themas}
           onThema={handleThema}
@@ -130,7 +130,7 @@ export default function SpelPagina() {
       </div>
 
       {/* Vraag-sectie: resterende ruimte */}
-      <div className="flex-1 min-h-0 px-4 py-4">
+      <div className="flex-1 min-h-0 px-4 py-2 sm:py-4">
         <SpelVraagVlak
           state={state}
           onAntwoord={handleAntwoord}
